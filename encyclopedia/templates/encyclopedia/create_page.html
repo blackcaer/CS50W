@@ -7,14 +7,11 @@
 {% block body %}
 <form method="POST">
     {% csrf_token %}
-    <label>Title</label>
-
+    <!-- <label>Title</label>
     <input type="text">
-
     <label>Content</label>
-
-    <textarea name="content_text" id="content_text"></textarea>
-
+    <textarea name="content_text" id="content_text"></textarea> -->
+    {{ create_page_form }}
     <input value="Save page" type="submit">
 
 </form>
