@@ -1,0 +1,22 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Create page
+{% endblock %}
+
+{% block body %}
+<form method="POST">
+    {% csrf_token %}
+    <label>Title</label>
+
+    <input type="text">
+
+    <label>Content</label>
+
+    <textarea name="content_text" id="content_text"></textarea>
+
+    <input value="Save page" type="submit">
+
+</form>
+
+{% endblock %}
