@@ -1,9 +1,8 @@
-import re
-
-from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+import re
 
 
 def list_entries():
@@ -38,18 +37,23 @@ def get_entry(title):
     except FileNotFoundError:
         return None
 
+def _get_name(name:str):
+    """ If site name exists, returns that site name, otherwise, returns None """
+
+    result = [site_name for site_name in list_entries() if name.strip().lower()==site_name.lower()]
+    return result[0] if result else None
+
 def _handle_search(request,all_sites=None):
     if not all_sites:
         all_sites = list_entries()
     if request.method=='POST':
         query = request.POST.get('q').strip().lower()
-
-        for site_name in all_sites:
-            site_name = site_name.lower()
-            if query == site_name:
-                return HttpResponseRedirect(site_name)
-            else:
-                simmilar_names = [name for name in all_sites if query in name.lower()]
-                return render(request,'encyclopedia/search_results.html',{
-                    'simmilar_names':simmilar_names
+        
+        site_name = _get_name(query)
+        if site_name:
+            return HttpResponseRedirect(site_name)
+        else:
+            simmilar_names = [name for name in all_sites if query in name.lower()]
+            return render(request,'encyclopedia/search_results.html',{
+                'simmilar_names':simmilar_names
                 })  

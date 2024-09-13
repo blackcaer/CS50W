@@ -1,9 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django import forms
+
 from . import util
 
-
+class CreatePageForm(forms.Form):
+    name = forms.CharField(label='Page name')
+    content = forms.CharField(label='Page content', widget=forms.Textarea(attrs={'name':'page_content'}))
+    
+    
 def index(request):
     all_sites = util.list_entries()
 
@@ -31,6 +36,25 @@ def content(request,content_name):
     
 def create_page(request):
     if request.method=='POST':
-        pass
+        form = CreatePageForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
 
-    return render(request,'encyclopedia/create_page.html')
+            if util._get_name(name):
+                return  render(request, 'encyclopedia/create_page.html', {
+                    'create_page_form': form,
+                    'error': 'A page with this name already exists.'
+                })
+            else:
+                util.save_entry(name, form.cleaned_data['content'])
+                print("AA",name)
+                return HttpResponseRedirect(name)
+
+
+        return render(request,'encyclopedia/create_page.html',{
+        'create_page_form':form
+        })
+
+    return render(request,'encyclopedia/create_page.html',{
+        'create_page_form':CreatePageForm()
+        })
