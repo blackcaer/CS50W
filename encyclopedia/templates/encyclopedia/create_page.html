@@ -7,12 +7,15 @@
 {% block body %}
 <form method="POST">
     {% csrf_token %}
-    <!-- <label>Title</label>
-    <input type="text">
-    <label>Content</label>
-    <textarea name="content_text" id="content_text"></textarea> -->
+
     {{ create_page_form }}
+
+    {% if error %}
+        <div class='error_msg'> {{error}} </div>
+    {% endif %}
+
     <input value="Save page" type="submit">
+    
 
 </form>
 
