@@ -58,15 +58,36 @@ def _handle_search(request,all_sites=None):
             return render(request,'encyclopedia/search_results.html',{
                 'simmilar_names':simmilar_names
                 })
-        
+
+
 def markdown(content):
-    return markdown2.markdown(content)
+    #return markdown2.markdown(content)
 
-    md_content=content
-    p=re.compile(r'\*\*')
+    def replace(text,span,replacement):
+        return text[:span[0]]+replacement+text[span[1]:]
 
-    for match in p.finditer(md_content):
-        match
-
-
-    return md_content
+    def handle_openclose(text,regex,open,close):
+        p = re.compile(regex)
+        opening,changes=None,[]
+        
+        for match in p.finditer(text):
+            if opening is not None:
+                changes.append((opening.span(),open))
+                changes.append((match.span(),close))
+                
+                opening=None
+            else:
+                opening = match
+        
+        changes.reverse()
+        for change in changes:
+            text=replace(text,*change)
+            
+        return text
+    
+    mdc = content # mdc - markdown content
+    
+    mdc = handle_openclose(mdc,r'\*\*','<b>','</b>')
+    mdc = handle_openclose(mdc,r'\*','<i>','</i>')
+    
+    return mdc
