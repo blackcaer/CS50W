@@ -3,7 +3,6 @@ from django.http import HttpResponseRedirect
 from django import forms
 from django.urls import reverse
 import random
-import markdown2
 from . import util
 
 class CreatePageForm(forms.Form):
@@ -31,7 +30,8 @@ def content(request,content_name):
             'content_name':content_name,
         })
     else:
-        content_markdown = markdown2.markdown(content)
+        content_markdown = util.markdown(content)
+
         return render(request,'encyclopedia/content.html',{
             'content_name':content_name,
             'content':content_markdown,
@@ -91,7 +91,7 @@ def edit_page(request,content_name):
     }
 
     edit_form = CreatePageForm(initial=initial_data)
-    edit_form.fields['name'].widget.attrs['disabled'] = 'disabled'
+    edit_form.fields['name'].widget.attrs['readonly'] = 'readonly'
     
 
     return render(request,'encyclopedia/edit_page.html',{

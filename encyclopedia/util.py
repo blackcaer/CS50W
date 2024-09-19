@@ -3,6 +3,7 @@ from django.core.files.base import ContentFile
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 import re
+import markdown2
 
 
 def list_entries():
@@ -56,4 +57,16 @@ def _handle_search(request,all_sites=None):
             simmilar_names = [name for name in all_sites if query in name.lower()]
             return render(request,'encyclopedia/search_results.html',{
                 'simmilar_names':simmilar_names
-                })  
+                })
+        
+def markdown(content):
+    return markdown2.markdown(content)
+
+    md_content=content
+    p=re.compile(r'\*\*')
+
+    for match in p.finditer(md_content):
+        match
+
+
+    return md_content
