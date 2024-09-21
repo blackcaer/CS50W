@@ -65,19 +65,30 @@ def _handle_search(request, all_sites=None):
 
 
 def markdown(content):
-    # return markdown2.markdown(content)
+    #return markdown2.markdown(content)
 
     def replace(text, span, replacement):
         return text[:span[0]]+replacement+text[span[1]:]
 
-    def handle_openclose(text, regex, open, close):
-        p = re.compile(regex)
+    '''    def handle_openclose(text, regex_open, regex_close, open_tag, close_tag):
+        ro = re.compile(regex_open)
+        rc = re.compile(regex_close)
         opening, changes = None, []
 
-        for match in p.finditer(text):
+        def gen_match(text):
+            opening=ro.search(text)
+            while(opening is not None):
+                yield opening
+                closing = rc.search(text,opening.span()[1])
+                if closing is None:
+                    return
+                yield closing
+                opening = ro.search(text,closing.span()[1])
+
+        for match in gen_match(text):
             if opening is not None:
-                changes.append((opening.span(), open))
-                changes.append((match.span(), close))
+                changes.append((opening.span(), open_tag))
+                changes.append((match.span(), close_tag))
                 opening = None
             else:
                 opening = match
@@ -86,11 +97,45 @@ def markdown(content):
         for change in changes:
             text = replace(text, *change)
 
-        return text
+        return text'''
 
+    def wrap_expression(text, regex, open_tag, close_tag,del_s=0,del_e=0,x=0):
+        p = re.compile(regex,flags=re.MULTILINE)
+        startpos, changes = 0, []
+
+        while(True):
+            match = p.search(text,startpos)
+            
+            if match is None:
+                break
+            if x==1:
+                print('XX',match.span(),' ',text[match.span()[0]:match.span()[1]])
+            start, end=match.span()
+            changes.append(((start, start + del_s), open_tag))
+            changes.append(((end - del_e, end), close_tag))
+            startpos=match.span()[1] 
+
+        changes.reverse()
+        for change in changes:
+            text = replace(text, *change)
+
+        return text
+    
     mdc = content  # mdc - markdown content
 
-    mdc = handle_openclose(mdc, r'\*\*', '<b>', '</b>')
-    mdc = handle_openclose(mdc, r'\*', '<i>', '</i>')
+    mdc = wrap_expression(mdc,r'\*\*.+\*\*','<strong>', '</strong>',2,2)
+    mdc = wrap_expression(mdc,r'\*.+\*','<em>', '</em>',1,1)
+
+    mdc = wrap_expression(mdc,r'^\*\s\w.*$','<li>', '</li>',1,0)
+    mdc = wrap_expression(mdc,r'(<li>.*</li>\n)+','<ul>', '</ul>')
+
+    mdc = wrap_expression(mdc,r'^###.+$','<h3>', '</h3>',3,0)
+    mdc = wrap_expression(mdc,r'^##.+$','<h2>', '</h2>',2,0)
+    mdc = wrap_expression(mdc,r'^#.+$','<h1>', '</h1>',1,0)
+    
+    mdc = wrap_expression(mdc,r'^.*\w.*(\n.*\w.*)*','<p>', '</p>',x=1)
+
+
+    
 
     return mdc
