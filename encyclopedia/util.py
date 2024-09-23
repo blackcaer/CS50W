@@ -65,7 +65,7 @@ def _handle_search(request, all_sites=None):
 
 
 def markdown(content):
-    #return markdown2.markdown(content)
+    # return markdown2.markdown(content)
 
     def replace(text, span, replacement):
         return text[:span[0]]+replacement+text[span[1]:]
@@ -100,14 +100,14 @@ def markdown(content):
         while (True):
             match = p.search(text, startpos)
             if match is None:
-                break 
+                break
 
             match_text = match.group()
             link = link_re.search(match_text).group()[1:-1]
             content = content_re.search(match_text).group()[1:-1]
 
             expression = f'<a href="{link}">{content}</a>'
-            changes.append((match.span(),expression))
+            changes.append((match.span(), expression))
             startpos = match.span()[1]
 
         changes.reverse()
@@ -122,7 +122,8 @@ def markdown(content):
     mdc = wrap_expression(mdc, r'\*.+\*', '<em>', '</em>', 1, 1)
 
     mdc = wrap_expression(mdc, r'^\*\s\w.*$', '<li>', '</li>', 1, 0)
-    mdc = wrap_expression(mdc, r'(<li>.*</li>[ \n\r]*)+<li>.*</li>', '<ul>', '</ul>')
+    mdc = wrap_expression(
+        mdc, r'(<li>.*</li>[ \n\r]*)+<li>.*</li>', '<ul>', '</ul>')
 
     mdc = wrap_expression(mdc, r'^###.+$', '<h3>', '</h3>', 3, 0)
     mdc = wrap_expression(mdc, r'^##.+$', '<h2>', '</h2>', 2, 0)
@@ -130,7 +131,7 @@ def markdown(content):
 
     mdc = handle_links(mdc)
 
-    mdc = wrap_expression(mdc, r'^(?!</?(h|u|l|o).?>).*\w.*(\n.*\w.*)*', '<p>', '</p>')
-
+    mdc = wrap_expression(
+        mdc, r'^(?!</?(h|u|l|o).?>).*\w.*(\n.*\w.*)*', '<p>', '</p>')
 
     return mdc
