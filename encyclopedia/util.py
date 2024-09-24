@@ -65,12 +65,12 @@ def _handle_search(request, all_sites=None):
 
 
 def markdown(content):
-    # return markdown2.markdown(content)
+    #return markdown2.markdown(content)
 
     def replace(text, span, replacement):
         return text[:span[0]]+replacement+text[span[1]:]
 
-    def wrap_expression(text, regex, open_tag, close_tag, del_s=0, del_e=0):
+    def wrap_expression(text, regex, open_tag, close_tag, del_s=0, del_e=0,x=0):
         p = re.compile(regex, flags=re.MULTILINE)
         startpos, changes = 0, []
 
@@ -79,7 +79,8 @@ def markdown(content):
 
             if match is None:
                 break
-
+            if x:
+                print('TEXT: ',match.group())
             start, end = match.span()
             changes.append(((start, start + del_s), open_tag))
             changes.append(((end - del_e, end), close_tag))
@@ -92,7 +93,7 @@ def markdown(content):
         return text
 
     def handle_links(text):
-        p = re.compile(r"\[.+\]\(/?.+\)", flags=re.MULTILINE)
+        p = re.compile(r"\[.+?\]\(/?.+?\)")
         content_re = re.compile(r"\[.+\]")
         link_re = re.compile(r"\(/?.+\)")
         startpos, changes = 0, []
@@ -103,6 +104,7 @@ def markdown(content):
                 break
 
             match_text = match.group()
+
             link = link_re.search(match_text).group()[1:-1]
             content = content_re.search(match_text).group()[1:-1]
 
@@ -118,8 +120,8 @@ def markdown(content):
 
     mdc = content  # mdc - markdown content
 
-    mdc = wrap_expression(mdc, r'\*\*.+\*\*', '<strong>', '</strong>', 2, 2)
-    mdc = wrap_expression(mdc, r'\*.+\*', '<em>', '</em>', 1, 1)
+    mdc = wrap_expression(mdc, r'\*\*.+?\*\*', '<strong>', '</strong>', 2, 2,x=1)
+    mdc = wrap_expression(mdc, r'\*.+?\*', '<em>', '</em>', 1, 1)
 
     mdc = wrap_expression(mdc, r'^\*\s\w.*$', '<li>', '</li>', 1, 0)
     mdc = wrap_expression(
