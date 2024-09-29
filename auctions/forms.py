@@ -30,9 +30,8 @@ class AuctionListingCreateFrom(ModelForm):
                 'class': 'form-control form-group',
                 'placeholder': 'Image url for your listing'
             }),
-            'category': forms.TextInput(attrs={
-                'class': 'form-control form-group',
-                'placeholder': 'Category of your product'
+            'category': forms.Select(attrs={
+                'class': 'form-control form-group'
             })
 
         }
