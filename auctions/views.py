@@ -5,13 +5,19 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django import forms
+from django.core.handlers.wsgi import WSGIRequest
 
 from .models import User,AuctionListing
 from .forms import AuctionListingCreateFrom,AuctionListing
 
 
-def index(request):
-    return render(request, "auctions/index.html")
+
+def index(request:WSGIRequest):
+
+    listings = AuctionListing.objects.filter(is_active=True)
+    print(listings)
+
+    return render(request, "auctions/index.html",{'listings':listings})
 
 
 def login_view(request):

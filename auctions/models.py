@@ -24,6 +24,7 @@ class Category(models.Model):
 class AuctionListing(models.Model):
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=2048)
+    is_active = models.BooleanField(default=True)
     start_bid = models.DecimalField(max_digits=7, decimal_places=2,
                                     verbose_name="Starting bid for auction",
                                     default=1,
@@ -40,7 +41,7 @@ class AuctionListing(models.Model):
     current_max_bid_user = models.ForeignKey(User,
                                              on_delete=models.CASCADE, related_name='max_bid_auctions', blank=True, null=True)
     img_url = models.URLField(
-        max_length=64, verbose_name="Listing image url", blank=True, null=True)
+        max_length=1024, verbose_name="Listing image url", blank=True, null=True)
 
     owner = models.ForeignKey(User,
                               on_delete=models.CASCADE, related_name='owned_auctions')
