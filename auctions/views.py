@@ -7,17 +7,16 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.core.handlers.wsgi import WSGIRequest
 
-from .models import User,AuctionListing
-from .forms import AuctionListingCreateFrom,AuctionListing
+from .models import User, AuctionListing
+from .forms import AuctionListingCreateFrom, AuctionListing
 
 
-
-def index(request:WSGIRequest):
+def index(request: WSGIRequest):
 
     listings = AuctionListing.objects.filter(is_active=True)
     print(listings)
 
-    return render(request, "auctions/index.html",{'listings':listings})
+    return render(request, "auctions/index.html", {'listings': listings})
 
 
 def login_view(request):
@@ -71,23 +70,24 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+
 @login_required
 def create_listing(request):
     form = AuctionListingCreateFrom()
 
-    if request.method=='POST':
+    if request.method == 'POST':
         form = AuctionListingCreateFrom(request.POST)
-        
+
         if form.is_valid():
-            auction:AuctionListing = form.save(commit=False)
+            auction: AuctionListing = form.save(commit=False)
             auction.owner = request.user
             auction.save()
             return HttpResponseRedirect(reverse(f'auction', args=[auction.pk]))
         else:
             pass
 
-    return render(request,'auctions/create_listing.html',{'form':form})
+    return render(request, 'auctions/create_listing.html', {'form': form})
 
 
-def show_auction(request,auction_pk):
+def show_auction(request, auction_pk):
     return HttpResponse("foo")
