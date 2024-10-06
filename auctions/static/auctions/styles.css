@@ -28,4 +28,14 @@ body {
   width: auto;
 }
 
+a.listing_link {
+  text-decoration: inherit;
+  color: inherit;
+  display: block;
+}
+
+a.listing_link:hover {
+  text-decoration: inherit;
+}
+
 /*# sourceMappingURL=styles.css.map */

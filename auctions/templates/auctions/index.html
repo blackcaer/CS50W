@@ -4,6 +4,7 @@
 <h2 class="text-nowrap">Active Listings</h2>
 
 {% for listing in listings %}
+<a href="{% url 'auction' listing.pk %}" style="text-decoration: none;" class="listing_link">
 <div class="listing_container row">
     <div class="col-sm-4">
         <h3>{{ listing.title }}</h3>
@@ -19,6 +20,7 @@
     </div>
     {% endif %}
 </div>
+</a>
 {% empty %}
 <p class="text-muted">No listings</p>
 {% endfor %}

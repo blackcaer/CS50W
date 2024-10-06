@@ -12,9 +12,7 @@ from .forms import AuctionListingCreateFrom, AuctionListing
 
 
 def index(request: WSGIRequest):
-
     listings = AuctionListing.objects.filter(is_active=True)
-    print(listings)
 
     return render(request, "auctions/index.html", {'listings': listings})
 

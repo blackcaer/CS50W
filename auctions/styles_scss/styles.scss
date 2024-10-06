@@ -12,13 +12,9 @@ body {
     background-color: #f9f9f9;
     border-radius: 5px;
 
-
-    //max-height: 150px;
     display: flex;
     flex-wrap: wrap;
-    //align-items: center;
     justify-content: space-between;
-
 }
 
 .listing_img_container {
@@ -33,4 +29,14 @@ body {
     height: 100%;
     width: auto;
 
+}
+
+a.listing_link {
+    text-decoration: inherit;
+    color: inherit; 
+    display: block;
+}
+
+a.listing_link:hover {
+    text-decoration: inherit; 
 }
