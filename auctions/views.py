@@ -89,6 +89,6 @@ def create_auction(request):
 
 def show_auction(request, auction_pk):
     auction = AuctionListing.objects.get(pk=auction_pk)
-    print(auction)
-    return render(request, "auctions/auction_details.html", {'auction': auction})
+    #print(auction)
+    return render(request, "auctions/auction_details.html", {'auction': auction,'user':request.user})
 

@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":[],"names":[],"mappings":"","file":"styles_auction_details.css"}
+{"version":3,"sourceRoot":"","sources":["../../styles_scss/styles_auction_details.scss"],"names":[],"mappings":"AAAA;EAEI","file":"styles_auction_details.css"}

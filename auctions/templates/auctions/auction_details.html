@@ -5,18 +5,62 @@
 <link href="{% static 'auctions/styles_auction_details.css' %}" rel="stylesheet">
 {% endblock %}
 
+{% block title %}
+    {{auction.title}}
+{% endblock %}
+
 {% block body %}
 
+{% if user.is_authenticated %}
 <div class="row">
+    <div>
+        <button class="btn btn-primary"> Add to watchlist </button>
+    </div>
+</div>
+{% endif %}
 
-    <div class="col-sm-10">    <img src="{{ auction.img_url }}" class="img-fluid">
+{% if auction.img_url %}
+<div class="row justify-content-center">
+    <div class="col-sm-10">    
+        <img src="{{ auction.img_url }}" class="img-fluid mx-auto d-block" id="main_listing_img">
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-sm-6">
+        <p class="display-5">{{auction.title}}</p>
+        <p>{{auction.description}}</p>
+    </div>
+    <div class="col-sm-6">
+        <p class="text-danger fw-bold text-nowrap fs-4">Current price: {{auction.current_max_bid}}</p>
+
+        <p class="fw-bold text-nowrap ">Category: {{auction.category}}</p>
+    </div>
+    
+</div>
+
+<!-- 
+<div class="row">
+    <div class="col-sm-6">
+        <p class="display-5">{{auction.title}}</p>
+    </div>
+
+    <div class="col-sm-6">
+        <p class="text-danger fw-bold text-nowrap fs-4">Current price: {{auction.current_max_bid}}</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4"></div>
+        <p>{{auction.description}}</p>
+    </div>
+    
+    <div class="col-sm-6">
+        <p class="fw-bold text-nowrap">Category: {{auction.category}}</p>
     </div>
 
 </div>
-<div class="row">
-    <div class="col-sm-6">fgdfg</div>
-    <div class="col-sm-6">gdfgdfg</div>
-</div>
-<div class="row">fdgdfg</div>
+
+<div class="row"></div> -->
 
 {% endblock %}
