@@ -1,8 +1,3 @@
-body {
-  padding: 10px;
-  min-width: 400px;
-}
-
 .auction_container {
   border: 1px solid #ddd;
   padding: 10px;
@@ -38,4 +33,4 @@ a.auction_link:hover {
   text-decoration: inherit;
 }
 
-/*# sourceMappingURL=styles.css.map */
+/*# sourceMappingURL=styles_index.css.map */

@@ -1,4 +1,9 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block head %}
+<link href="{% static 'auctions/styles_index.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block body %}
 <h2 class="text-nowrap">Active Listings</h2>

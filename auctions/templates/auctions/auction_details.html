@@ -1,11 +1,22 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block head %}
+<link href="{% static 'auctions/styles_auction_details.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block body %}
-<h2 class="text-nowrap">Active Listings</h2>
 
+<div class="row">
 
-<img src="{{ auction.img_url }}" class="auction_image "> <!-- img-fluid -->
+    <div class="col-sm-10">    <img src="{{ auction.img_url }}" class="img-fluid">
+    </div>
 
-
+</div>
+<div class="row">
+    <div class="col-sm-6">fgdfg</div>
+    <div class="col-sm-6">gdfgdfg</div>
+</div>
+<div class="row">fdgdfg</div>
 
 {% endblock %}
