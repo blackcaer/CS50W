@@ -1,3 +1,31 @@
 body {
-    padding: 10px;
+  padding: 10px;
+  min-width: 400px;
 }
+
+.listing_container {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin: 0px 0px 10px 0px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.listing_img_container {
+  color: #FFF;
+  max-height: 120px;
+}
+
+.listing_image {
+  border-radius: 5px;
+  object-fit: cover;
+  height: 100%;
+  width: auto;
+}
+
+/*# sourceMappingURL=styles.css.map */
