@@ -12,9 +12,9 @@ from .forms import AuctionListingCreateFrom, AuctionListing
 
 
 def index(request: WSGIRequest):
-    listings = AuctionListing.objects.filter(is_active=True)
+    auctions = AuctionListing.objects.filter(is_active=True)
 
-    return render(request, "auctions/index.html", {'listings': listings})
+    return render(request, "auctions/index.html", {'auctions': auctions})
 
 
 def login_view(request):
@@ -70,7 +70,7 @@ def register(request):
 
 
 @login_required
-def create_listing(request):
+def create_auction(request):
     form = AuctionListingCreateFrom()
 
     if request.method == 'POST':
@@ -84,8 +84,11 @@ def create_listing(request):
         else:
             pass
 
-    return render(request, 'auctions/create_listing.html', {'form': form})
+    return render(request, 'auctions/create_auction.html', {'form': form})
 
 
 def show_auction(request, auction_pk):
-    return HttpResponse("foo")
+    auction = AuctionListing.objects.get(pk=auction_pk)
+    print(auction)
+    return render(request, "auctions/auction_details.html", {'auction': auction})
+

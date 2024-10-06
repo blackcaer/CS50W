@@ -3,7 +3,7 @@ body {
     min-width: 400px;
 }
 
-.listing_container {
+.auction_container {
     border: 1px solid #ddd;
     padding: 10px;
     margin-bottom: 10px;
@@ -17,13 +17,13 @@ body {
     justify-content: space-between;
 }
 
-.listing_img_container {
+.auction_img_container {
     color: #FFF;
     max-height: 120px;
 
 }
 
-.listing_image {
+.auction_image {
     border-radius: 5px;
     object-fit: cover;
     height: 100%;
@@ -31,12 +31,12 @@ body {
 
 }
 
-a.listing_link {
+a.auction_link {
     text-decoration: inherit;
     color: inherit; 
     display: block;
 }
 
-a.listing_link:hover {
+a.auction_link:hover {
     text-decoration: inherit; 
 }

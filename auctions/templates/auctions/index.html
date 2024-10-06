@@ -3,26 +3,26 @@
 {% block body %}
 <h2 class="text-nowrap">Active Listings</h2>
 
-{% for listing in listings %}
-<a href="{% url 'auction' listing.pk %}" style="text-decoration: none;" class="listing_link">
-<div class="listing_container row">
+{% for auction in auctions %}
+<a href="{% url 'auction' auction.pk %}" style="text-decoration: none;" class="auction_link">
+<div class="auction_container row">
     <div class="col-sm-4">
-        <h3>{{ listing.title }}</h3>
-        <p>{{ listing.description }}</p>
-        <div class="listing_price text-danger font-weight-bold text-nowrap">
-            Current price: {{ listing.current_max_bid }}
+        <h3>{{ auction.title }}</h3>
+        <p>{{ auction.description }}</p>
+        <div class="auction_price text-danger font-weight-bold text-nowrap">
+            Current price: {{ auction.current_max_bid }}
         </div>
     </div>
 
-    {% if listing.img_url %}
-    <div class="listing_img_container col-sm-4 text-sm-right"> <!-- col-12 for mobile -->
-        <img src="{{ listing.img_url }}" class="listing_image "> <!-- img-fluid -->
+    {% if auction.img_url %}
+    <div class="auction_img_container col-sm-4 text-sm-right"> <!-- col-12 for mobile -->
+        <img src="{{ auction.img_url }}" class="auction_image "> <!-- img-fluid -->
     </div>
     {% endif %}
 </div>
 </a>
 {% empty %}
-<p class="text-muted">No listings</p>
+<p class="text-muted">No auctions</p>
 {% endfor %}
 
 
