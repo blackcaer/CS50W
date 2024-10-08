@@ -17,9 +17,9 @@
         <form action="{% url 'auction' auction.pk %}" method="post">
             {% csrf_token %}
             {% if not in_watchlist %}
-            <button type="submit" class="btn btn-primary">Add to watchlist</button>
+            <button type="submit" name="action" value="add_to_watchlist" class="btn btn-primary">Add to watchlist</button>
             {% else %}
-            <button type="submit" class="btn btn-primary">Remove from watchlist</button>
+            <button type="submit" name="action" value="remove_from_watchlist" class="btn btn-primary">Remove from watchlist</button>
             {% endif %}
         </form>
     </div>
