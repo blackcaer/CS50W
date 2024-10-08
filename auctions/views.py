@@ -14,7 +14,7 @@ from .forms import AuctionListingCreateFrom, AuctionListing
 def index(request: WSGIRequest):
     auctions = AuctionListing.objects.filter(is_active=True)
 
-    return render(request, "auctions/index.html", {'auctions': auctions})
+    return render(request, "auctions/show_auctions.html", {'auctions': auctions, 'header': 'Active Listings'})
 
 
 def login_view(request):
