@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django import forms
 
-from .models import AuctionListing, Comment
+from .models import AuctionListing, Comment,Bid
 
 
 class AuctionListingCreateFrom(ModelForm):
@@ -50,3 +50,22 @@ class CreateCommentForm(ModelForm):
         labels = {
             'content': ''
         }
+
+class CreateBidForm(ModelForm):
+    class Meta:
+        model = Bid
+        fields = ['price']
+        widgets = {
+            'price': forms.TextInput(attrs={
+                'class': 'form-control form-group',
+                'placeholder': 'Starting bid',
+                'type': 'number',
+                'min': 1,
+                'max': 99999.99,
+                'step': 0.01
+            }),
+        }
+        labels = {
+            'price': ''
+        }
+
