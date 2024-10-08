@@ -14,7 +14,14 @@
 {% if user.is_authenticated %}
 <div class="row">
     <div>
-        <button class="btn btn-primary"> Add to watchlist </button>
+        <form action="{% url 'auction' auction.pk %}" method="post">
+            {% csrf_token %}
+            {% if not in_watchlist %}
+             <button type="submit" class="btn btn-primary">Add to watchlist</button>
+            {% else %}
+             <button type="submit" class="btn btn-primary">Remove from watchlist</button>
+            {% endif %}
+        </form>
     </div>
 </div>
 {% endif %}
