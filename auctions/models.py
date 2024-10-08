@@ -59,8 +59,13 @@ class AuctionListing(models.Model):
 
 
 class Bid(models.Model):
-    pass
-
+    price = models.DecimalField(models.DecimalField(max_digits=7, decimal_places=2,
+                                          validators=[
+                                              MaxValueValidator(99999.99),
+                                              MinValueValidator(1)
+                                          ],default=1, blank=False, null=False))
+    auction = models.OneToOneField(AuctionListing,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE,verbose_name='User who placed bid')
 
 class Comment(models.Model):
     pass
