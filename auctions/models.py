@@ -6,9 +6,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class User(AbstractUser):
     def __str__(self) -> str:
         return f"{self.username} {self.email}: pk={self.pk}"
-    
 
-    watchlist = models.ManyToManyField('AuctionListing', related_name="users_watching", blank=True)
+    watchlist = models.ManyToManyField(
+        'AuctionListing', related_name="users_watching", blank=True)
 
 
 class Category(models.Model):
@@ -41,14 +41,15 @@ class AuctionListing(models.Model):
                                               MinValueValidator(1)
                                           ], blank=True, null=True)
     current_max_bid_user = models.ForeignKey(User,
-                                             on_delete=models.CASCADE, related_name='max_bid_auctions', blank=True, null=True)
+                                             on_delete=models.CASCADE, related_name='max_bid_auctions',
+                                             blank=True, null=True)
     img_url = models.URLField(
         max_length=1024, verbose_name="Listing image url", blank=True, null=True)
 
     owner = models.ForeignKey(User,
                               on_delete=models.CASCADE, related_name='owned_auctions')
 
-    category = models.ForeignKey(Category, on_delete=models.SET(Category.get_none_category), 
+    category = models.ForeignKey(Category, on_delete=models.SET(Category.get_none_category),
                                  related_name='auctions', default=Category.get_none_category,
                                  blank=False, null=False,
                                  verbose_name="Product category")

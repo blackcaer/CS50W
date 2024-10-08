@@ -93,7 +93,7 @@ def show_auction(request: WSGIRequest, auction_pk):
     if not request.user.is_authenticated:
         return render(request, "auctions/auction_details.html", {'auction': auction})
     watched_auctions = request.user.watchlist.all()
-    
+
     if request.method == 'POST':
         if auction not in watched_auctions:
             request.user.watchlist.add(auction)
@@ -101,8 +101,8 @@ def show_auction(request: WSGIRequest, auction_pk):
             request.user.watchlist.remove(auction)
 
     in_watchlist = auction in request.user.watchlist.all()
-    return render(request, "auctions/auction_details.html", {'auction': auction, 
-                                                             'user': request.user, 
+    return render(request, "auctions/auction_details.html", {'auction': auction,
+                                                             'user': request.user,
                                                              'in_watchlist': in_watchlist})
 
 
