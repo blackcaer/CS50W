@@ -11,7 +11,7 @@
         <div>{{ message }}</div>
     {% endif %}
     
-    <form action="{% url 'create_listing' %}" method="post">
+    <form action="{% url 'create_auction' %}" method="post">
         
         {% if form.errors %}
             <div class="alert alert-danger" role="alert">
