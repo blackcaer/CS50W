@@ -64,10 +64,10 @@ class Bid(models.Model):
                                               MaxValueValidator(99999.99),
                                               MinValueValidator(1)
                                           ],default=1, blank=False, null=False))
-    auction = models.OneToOneField(AuctionListing,on_delete=models.CASCADE)
-    user = models.OneToOneField(User,on_delete=models.CASCADE,verbose_name='User who placed bid')
+    auction = models.OneToOneField(AuctionListing,on_delete=models.CASCADE,related_name='bids')
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='user_bids',verbose_name='User who placed bid')
 
 class Comment(models.Model):
     content = models.CharField(max_length=1024)
-    auction = models.OneToOneField(AuctionListing,on_delete=models.CASCADE,verbose_name="Commented auction")
-    user = models.OneToOneField(User,on_delete=models.CASCADE,verbose_name='User who wrote the comment')
+    auction = models.OneToOneField(AuctionListing,on_delete=models.CASCADE,related_name='comments',verbose_name="Commented auction")
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='user_comments',verbose_name='User who wrote the comment')
