@@ -59,15 +59,22 @@ class AuctionListing(models.Model):
 
 
 class Bid(models.Model):
-    price = models.DecimalField(models.DecimalField(max_digits=7, decimal_places=2,
-                                          validators=[
-                                              MaxValueValidator(99999.99),
-                                              MinValueValidator(1)
-                                          ],default=1, blank=False, null=False))
-    auction = models.OneToOneField(AuctionListing,on_delete=models.CASCADE,related_name='bids')
-    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='user_bids',verbose_name='User who placed bid')
+    price = models.DecimalField(max_digits=7, decimal_places=2,
+                                validators=[
+                                    MaxValueValidator(99999.99),
+                                    MinValueValidator(1)
+                                ], default=1, blank=False, null=False)
+    auction = models.OneToOneField(
+        AuctionListing, on_delete=models.CASCADE, related_name='bids', blank=False, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_bids',
+                                verbose_name='User who placed bid', blank=False, null=True)
+
 
 class Comment(models.Model):
-    content = models.CharField(max_length=1024)
-    auction = models.OneToOneField(AuctionListing,on_delete=models.CASCADE,related_name='comments',verbose_name="Commented auction")
-    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='user_comments',verbose_name='User who wrote the comment')
+    content = models.CharField(max_length=1024,default="",blank=False)
+    auction = models.OneToOneField(AuctionListing, on_delete=models.CASCADE,
+                                   related_name='comments',
+                                   verbose_name="Commented auction",
+                                   blank=False, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name='user_comments', verbose_name='User who wrote the comment', blank=False, null=True)
