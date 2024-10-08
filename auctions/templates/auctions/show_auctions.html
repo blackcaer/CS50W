@@ -6,7 +6,10 @@
 {% endblock %}
 
 {% block body %}
-<h2 class="text-nowrap">Active Listings</h2>
+
+{% block body-start %}
+<h2 class="text-nowrap">{{header}}</h2>
+{% endblock %}
 
 {% for auction in auctions %}
 <a href="{% url 'auction' auction.pk %}" style="text-decoration: none;" class="auction_link">
@@ -20,8 +23,8 @@
     </div>
 
     {% if auction.img_url %}
-    <div class="auction_img_container col-sm-4 text-sm-end"> <!-- col-12 for mobile -->
-        <img src="{{ auction.img_url }}" class="auction_image "> <!-- img-fluid -->
+    <div class="auction_img_container col-sm-4 text-sm-end">
+        <img src="{{ auction.img_url }}" class="auction_image ">
     </div>
     {% endif %}
 </div>
@@ -29,6 +32,9 @@
 {% empty %}
 <p class="text-muted">No auctions</p>
 {% endfor %}
+
+{% block body-end %}
+{% endblock %}
 
 
 {% endblock %}
