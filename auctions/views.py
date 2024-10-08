@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.core.handlers.wsgi import WSGIRequest
 
-from .models import User, AuctionListing
+from .models import User, AuctionListing, Category
 from .forms import AuctionListingCreateFrom, AuctionListing
 
 
@@ -90,5 +90,21 @@ def create_auction(request):
 def show_auction(request, auction_pk):
     auction = AuctionListing.objects.get(pk=auction_pk)
     #print(auction)
-    return render(request, "auctions/auction_details.html", {'auction': auction,'user':request.user})
+    return render(request, "auctions/auction_details.html", {'auction': auction, 
+                                                             'user': request.user, 
+                                                             'in_watchlist': in_watchlist})
 
+
+def show_watchlist(request):
+    watched_auctions = request.user.watchlist.all()
+    return render(request, 'auctions/show_auctions.html', {'auctions': watched_auctions, 'header': 'Watched listings'})
+
+
+def show_categories(request):
+    categories = Category.objects.all()
+    return render(request, 'auctions/show_categories.html', {'categories': categories})
+
+
+def show_category_listings(request, category_name):
+    category_listings = Category.auctions.all()
+    return render(request, 'auctions/show_auctions.html', {'auctions': category_listings, 'header': f'Category: {category_name}'})
