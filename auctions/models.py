@@ -68,4 +68,6 @@ class Bid(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,verbose_name='User who placed bid')
 
 class Comment(models.Model):
-    pass
+    content = models.CharField(max_length=1024)
+    auction = models.OneToOneField(AuctionListing,on_delete=models.CASCADE,verbose_name="Commented auction")
+    user = models.OneToOneField(User,on_delete=models.CASCADE,verbose_name='User who wrote the comment')
