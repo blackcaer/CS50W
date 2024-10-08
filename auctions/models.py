@@ -48,8 +48,8 @@ class AuctionListing(models.Model):
     owner = models.ForeignKey(User,
                               on_delete=models.CASCADE, related_name='owned_auctions')
 
-    category = models.ForeignKey(Category, on_delete=models.SET(Category.get_none_category), related_name='listings',
-                                 default=Category.get_none_category,
+    category = models.ForeignKey(Category, on_delete=models.SET(Category.get_none_category), 
+                                 related_name='auctions', default=Category.get_none_category,
                                  blank=False, null=False,
                                  verbose_name="Product category")
 
