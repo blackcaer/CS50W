@@ -117,5 +117,5 @@ def show_categories(request):
 
 
 def show_category_listings(request, category_name):
-    category_listings = Category.auctions.all()
+    category_listings = Category.objects.get(name=category_name).auctions.all()
     return render(request, 'auctions/show_auctions.html', {'auctions': category_listings, 'header': f'Category: {category_name}'})
