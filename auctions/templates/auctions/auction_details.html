@@ -17,9 +17,9 @@
         <form action="{% url 'auction' auction.pk %}" method="post">
             {% csrf_token %}
             {% if not in_watchlist %}
-            <button type="submit" name="action" value="add_to_watchlist" class="btn btn-primary">Add to watchlist</button>
+                <button type="submit" name="action" value="add_to_watchlist" class="btn btn-primary">Add to watchlist</button>
             {% else %}
-            <button type="submit" name="action" value="remove_from_watchlist" class="btn btn-primary">Remove from watchlist</button>
+                <button type="submit" name="action" value="remove_from_watchlist" class="btn btn-primary">Remove from watchlist</button>
             {% endif %}
         </form>
     </div>
@@ -47,27 +47,31 @@
 
 </div>
 
-<!-- 
 <div class="row">
-    <div class="col-sm-6">
-        <p class="display-5">{{auction.title}}</p>
-    </div>
+    {% if user.is_authenticated %}
+    <div class="col-sm-12 mt-4 mb-5">
 
-    <div class="col-sm-6">
-        <p class="text-danger fw-bold text-nowrap fs-4">Current price: {{auction.current_max_bid}}</p>
+        <form method="POST">
+            {% csrf_token %}
+            {{create_comment_form }}
+            <button class="btn btn-primary my-2" type="submit" name="action" value="add_comment">Add comment</button>
+        </form>
     </div>
+    {% endif %}
 </div>
 <div class="row">
-    <div class="col-sm-4"></div>
-        <p>{{auction.description}}</p>
+    <div class="col-sm-12">
+        {% for comment in comments %}
+            <div class="comment p-2 mb-2">
+                <div class="comment_header">
+                    <b>{{comment.user.username}}</b>
+                </div>
+                <div>
+                    {{comment.content}}
+                </div>
+            </div>
+        {% endfor %}
     </div>
-    
-    <div class="col-sm-6">
-        <p class="fw-bold text-nowrap">Category: {{auction.category}}</p>
-    </div>
-
 </div>
-
-<div class="row"></div> -->
 
 {% endblock %}

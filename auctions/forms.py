@@ -1,18 +1,18 @@
 from django.forms import ModelForm
 from django import forms
 
-from .models import AuctionListing
+from .models import AuctionListing, Comment
 
 
 class AuctionListingCreateFrom(ModelForm):
     class Meta:
         model = AuctionListing
-        fields = ['title', 'description', 'start_bid','img_url','category']
+        fields = ['title', 'description', 'start_bid', 'img_url', 'category']
         widgets = {'title': forms.TextInput(attrs={
-                'class': 'form-control form-group',
-                'autofocus': True,
-                'placeholder': 'Title'
-            }),
+            'class': 'form-control form-group',
+            'autofocus': True,
+            'placeholder': 'Title'
+        }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control form-group',
                 'rows': 10,
@@ -21,10 +21,10 @@ class AuctionListingCreateFrom(ModelForm):
             'start_bid': forms.TextInput(attrs={
                 'class': 'form-control form-group',
                 'placeholder': 'Starting bid',
-                'type':'number',
-                'min':1,
-                'max':99999.99,
-                'step':0.01
+                'type': 'number',
+                'min': 1,
+                'max': 99999.99,
+                'step': 0.01
             }),
             'img_url': forms.TextInput(attrs={
                 'class': 'form-control form-group',
@@ -35,4 +35,18 @@ class AuctionListingCreateFrom(ModelForm):
             })
 
         }
-         
+
+
+class CreateCommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control form-group',
+                'placeholder': 'Write your comment',
+                'rows': 4, 'cols': 40})
+        }
+        labels = {
+            'content': ''
+        }

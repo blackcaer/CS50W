@@ -1,14 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.core.handlers.wsgi import WSGIRequest
 
 from .models import User, AuctionListing, Category
-from .forms import AuctionListingCreateFrom, AuctionListing
+from .forms import AuctionListingCreateFrom, AuctionListing, CreateCommentForm
 
 
 def index(request: WSGIRequest):
@@ -89,21 +89,38 @@ def create_auction(request):
 
 def show_auction(request: WSGIRequest, auction_pk):
     auction = AuctionListing.objects.get(pk=auction_pk)
+    comments = auction.comments.all()
+    context = {'auction': auction,'comments':comments}
 
     if not request.user.is_authenticated:
-        return render(request, "auctions/auction_details.html", {'auction': auction})
+        return render(request, "auctions/auction_details.html", context)
+    
     watched_auctions = request.user.watchlist.all()
 
     if request.method == 'POST':
-        if auction not in watched_auctions:
-            request.user.watchlist.add(auction)
-        else:
-            request.user.watchlist.remove(auction)
+        action = request.POST.get('action')
+        if action in ('add_to_watchlist','remove_from_watchlist'):
+            if auction not in watched_auctions:
+                request.user.watchlist.add(auction)
+            else:
+                request.user.watchlist.remove(auction)
+        elif action == 'add_comment':
+            form = CreateCommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.user = request.user
+                comment.auction = auction
+                comment.save()
+        return redirect('auction',auction_pk=auction_pk)
 
+    create_comment_form = CreateCommentForm()
     in_watchlist = auction in request.user.watchlist.all()
-    return render(request, "auctions/auction_details.html", {'auction': auction,
-                                                             'user': request.user,
-                                                             'in_watchlist': in_watchlist})
+    
+    context.update({'user': request.user,
+                    'in_watchlist': in_watchlist,
+                    'create_comment_form':create_comment_form})
+
+    return render(request, "auctions/auction_details.html", context)
 
 
 def show_watchlist(request):
