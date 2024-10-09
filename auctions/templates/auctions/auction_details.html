@@ -64,24 +64,26 @@
         <p class="fw-bold text-nowrap ">Category: {{auction.category}}</p>
 
         {% if auction.is_active %}
-        {% if user.is_authenticated %}
-        <form method="POST">
-            {% csrf_token %}
-            {% if create_bid_form.errors %}
-            <div class="alert alert-danger" role="alert">
-                {% for field, errors in create_bid_form.errors.items %}
-                {% for error in errors %}
-                <b>{{ field }}</b>: {{ error }} <br>
-                {% endfor %}
-                {% endfor %}
-            </div>
+            {% if is_owner %}
+            <!-- You are the owner -->
+            {% elif user.is_authenticated %}
+            <form method="POST">
+                {% csrf_token %}
+                {% if create_bid_form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for field, errors in create_bid_form.errors.items %}
+                    {% for error in errors %}
+                    <b>{{ field }}</b>: {{ error }} <br>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {{create_bid_form}}
+                <button class="btn btn-success my-2" type="submit" name="action" value="place_bid">Place bid</button>
+            </form>
             {% endif %}
-            {{create_bid_form}}
-            <button class="btn btn-success my-2" type="submit" name="action" value="place_bid">Place bid</button>
-        </form>
-        {% endif %}
         {% else %}
-        Auction has ended
+        <p>Auction has ended</p>
         {% endif %}
     </div>
 

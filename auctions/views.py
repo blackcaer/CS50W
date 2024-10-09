@@ -160,6 +160,9 @@ def show_auction(request: WSGIRequest, auction_pk):
                 if bid.price < min_price:
                     bid_form.add_error(
                         'price', f"Bid must be at least {min_price:.2f}")
+                elif is_owner:
+                    bid_form.add_error(
+                        'price', f"You cannot bid on your own offer")
                 else:
                     bid.user = request.user
                     bid.auction = auction
@@ -171,7 +174,7 @@ def show_auction(request: WSGIRequest, auction_pk):
             auction.is_active=False
             if max_bid is not None:
                 auction.winning_bid = max_bid
-                
+
             auction.save()
             return redirect('auction', auction_pk=auction_pk)
 
