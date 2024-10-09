@@ -40,10 +40,18 @@
         <p>{{auction.description}}</p>
     </div>
     <div class="col-sm-6">
-        <p class="text-danger fw-bold text-nowrap fs-4">Current price: {{auction.current_max_bid}}</p>
-    
+{% if auction.is_active %}
+        <p class="text-danger fw-bold text-nowrap fs-4">Current price: ${{current_price}}</p>
+        {% elif is_winner %}
+            <p class="text-success fw-bold text-nowrap fs-3">You won this auction for: ${{winning_price}}</p>
+        {% elif winning_price %}
+            <p class="text-danger fw-bold text-nowrap fs-4">The item was sold for: ${{winning_price}}</p>
+        {% else %}
+            <p class="text-danger fw-bold text-nowrap fs-4">The auction was closed or winner was deleted</p>
+        {% endif %}    
         <p class="fw-bold text-nowrap ">Category: {{auction.category}}</p>
     
+{% if auction.is_active %}
         {% if user.is_authenticated %}
         <form method="POST">
             {% csrf_token %}
@@ -59,15 +67,18 @@
             {{create_bid_form}}
             <button class="btn btn-success my-2" type="submit" name="action" value="place_bid">Place bid</button>
         </form>
+{% endif %}
+        {% else %}
+        Auction has ended
         {% endif %}
     </div>
 
 </div>
 
-<div class="row">
-    {% if user.is_authenticated %}
+<div class="row mt-3 p-1">
+<h4> Comments </h4>
+    {% if user.is_authenticated and auction.is_active %}
     <div class="col-sm-12 mt-4 mb-5">
-
         <form method="POST">
             {% csrf_token %}
             {{create_comment_form }}
