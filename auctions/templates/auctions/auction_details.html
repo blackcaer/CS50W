@@ -12,8 +12,8 @@
 {% block body %}
 
 {% if user.is_authenticated %}
-<div class="row">
-    <div>
+<div class="row mb-3">
+    <div class="text-nowrap d-flex gap-2">
         <form action="{% url 'auction' auction.pk %}" method="post">
             {% csrf_token %}
             {% if not in_watchlist %}
@@ -37,7 +37,7 @@
 {% endif %}
 
 {% if auction.img_url %}
-<div class="row justify-content-center">
+<div class="row justify-content-center mb-4 my-2">
     <div class="col-sm-10">
         <img src="{{ auction.img_url }}" class="img-fluid mx-auto d-block" id="main_listing_img">
     </div>
