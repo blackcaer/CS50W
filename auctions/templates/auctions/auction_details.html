@@ -17,20 +17,22 @@
         <form action="{% url 'auction' auction.pk %}" method="post">
             {% csrf_token %}
             {% if not in_watchlist %}
-                <button type="submit" name="action" value="add_to_watchlist" class="btn btn-primary">Add to watchlist</button>
+            <button type="submit" name="action" value="add_to_watchlist" class="btn btn-primary">Add to
+                watchlist</button>
             {% else %}
-                <button type="submit" name="action" value="remove_from_watchlist" class="btn btn-primary">Remove from watchlist</button>
+            <button type="submit" name="action" value="remove_from_watchlist" class="btn btn-primary">Remove from
+                watchlist</button>
             {% endif %}
         </form>
-    
-    {% if is_owner and auction.is_active %}
-    
-    <form action="{% url 'auction' auction.pk %}" method="post">
-        {% csrf_token %}
-        <button type="submit" name="action" value="close_auction" class="btn btn-danger">Close auction</button>
-    </form>
 
-    {% endif %}
+        {% if is_owner and auction.is_active %}
+
+        <form action="{% url 'auction' auction.pk %}" method="post">
+            {% csrf_token %}
+            <button type="submit" name="action" value="close_auction" class="btn btn-danger">Close auction</button>
+        </form>
+
+        {% endif %}
 
     </div>
 </div>
@@ -51,33 +53,33 @@
     </div>
     <div class="col-sm-6">
         {% if auction.is_active %}
-            <p class="text-danger fw-bold text-nowrap fs-4">Current price: ${{current_price}}</p>
+        <p class="text-danger fw-bold text-nowrap fs-4">Current price: ${{current_price}}</p>
         {% elif is_winner %}
-            <p class="text-success fw-bold text-nowrap fs-3">You won this auction for: ${{winning_price}}</p>
+        <p class="text-success fw-bold text-nowrap fs-3">You won this auction for: ${{winning_price}}</p>
         {% elif winning_price %}
-            <p class="text-danger fw-bold text-nowrap fs-4">The item was sold for: ${{winning_price}}</p>
+        <p class="text-danger fw-bold text-nowrap fs-4">The item was sold for: ${{winning_price}}</p>
         {% else %}
-            <p class="text-danger fw-bold text-nowrap fs-4">The auction was closed or winner was deleted</p>
+        <p class="text-danger fw-bold text-nowrap fs-4">The auction was closed or winner was deleted</p>
         {% endif %}
         <p class="fw-bold text-nowrap ">Category: {{auction.category}}</p>
-        
+
         {% if auction.is_active %}
-            {% if user.is_authenticated %}
-            <form method="POST">
-                {% csrf_token %}
-                {% if create_bid_form.errors %}
-                    <div class="alert alert-danger" role="alert">
-                        {% for field, errors in create_bid_form.errors.items %}
-                            {% for error in errors %}
-                                <b>{{ field }}</b>: {{ error }} <br>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                {{create_bid_form}}
-                <button class="btn btn-success my-2" type="submit" name="action" value="place_bid">Place bid</button>
-            </form>
+        {% if user.is_authenticated %}
+        <form method="POST">
+            {% csrf_token %}
+            {% if create_bid_form.errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for field, errors in create_bid_form.errors.items %}
+                {% for error in errors %}
+                <b>{{ field }}</b>: {{ error }} <br>
+                {% endfor %}
+                {% endfor %}
+            </div>
             {% endif %}
+            {{create_bid_form}}
+            <button class="btn btn-success my-2" type="submit" name="action" value="place_bid">Place bid</button>
+        </form>
+        {% endif %}
         {% else %}
         Auction has ended
         {% endif %}
@@ -100,14 +102,14 @@
 <div class="row">
     <div class="col-sm-12">
         {% for comment in comments %}
-            <div class="comment p-2 mb-2">
-                <div class="comment_header">
-                    <b>{{comment.user.username}}</b>
-                </div>
-                <div>
-                    {{comment.content}}
-                </div>
+        <div class="comment p-2 mb-2">
+            <div class="comment_header">
+                <b>{{comment.user.username}}</b>
             </div>
+            <div>
+                {{comment.content}}
+            </div>
+        </div>
         {% empty %}
         <p>No comments</p>
         {% endfor %}
