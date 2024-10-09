@@ -22,6 +22,16 @@
                 <button type="submit" name="action" value="remove_from_watchlist" class="btn btn-primary">Remove from watchlist</button>
             {% endif %}
         </form>
+
+    {% if is_owner and auction.is_active %}
+    
+    <form action="{% url 'auction' auction.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit" name="action" value="close_auction" class="btn btn-danger">Close auction</button>
+    </form>
+
+    {% endif %}
+
     </div>
 </div>
 {% endif %}
