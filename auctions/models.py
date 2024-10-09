@@ -64,7 +64,7 @@ class Bid(models.Model):
                                     MaxValueValidator(99999.99),
                                     MinValueValidator(1)
                                 ], default=1, blank=False, null=False)
-    auction = models.OneToOneField(
+    auction = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name='bids', blank=False, null=True)
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_bids',
