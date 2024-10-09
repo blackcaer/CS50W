@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django import forms
 
-from .models import AuctionListing, Comment,Bid
+from .models import AuctionListing, Comment, Bid
 
 
 class AuctionListingCreateFrom(ModelForm):
@@ -51,6 +51,7 @@ class CreateCommentForm(ModelForm):
             'content': ''
         }
 
+
 class CreateBidForm(ModelForm):
     class Meta:
         model = Bid
@@ -68,4 +69,3 @@ class CreateBidForm(ModelForm):
         labels = {
             'price': ''
         }
-

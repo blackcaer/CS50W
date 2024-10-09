@@ -46,7 +46,8 @@ class AuctionListing(models.Model):
                                  blank=False, null=False,
                                  verbose_name="Product category")
 
-    winning_bid = models.OneToOneField('Bid',on_delete=models.SET_NULL,related_name='won_auction',blank=True,null=True)
+    winning_bid = models.OneToOneField(
+        'Bid', on_delete=models.SET_NULL, related_name='won_auction', blank=True, null=True)
 
     def __str__(self) -> str:
         return f"Auction '{self.title}'(pk={self.pk}) category:{self.category} owner:'{self.owner}'"

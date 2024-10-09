@@ -97,7 +97,7 @@ def show_auction(request: WSGIRequest, auction_pk):
 
     if not request.user.is_authenticated:
         return render(request, "auctions/auction_details.html", context)
-    
+
     context['in_watchlist'] = auction in request.user.watchlist.all()
 
     if not auction.is_active:
@@ -117,19 +117,20 @@ def show_auction(request: WSGIRequest, auction_pk):
         min_price = round(current_price + Decimal(0.01), 2)
 
     bid_form = CreateBidForm(initial={'price': min_price})
-    
-    bid_form.fields['price'].widget.attrs['min'] = min_price # Set minimum price in Bid form
+
+    # Set minimum price in Bid form
+    bid_form.fields['price'].widget.attrs['min'] = min_price
 
     create_comment_form = CreateCommentForm()
 
     is_owner = (auction.owner == request.user)
-    
+
     context.update({'user': request.user,
                     'create_comment_form': create_comment_form,
                     'create_bid_form': bid_form,
                     'is_owner': is_owner,
-                    'current_price':current_price})
-    
+                    'current_price': current_price})
+
     watched_auctions = request.user.watchlist.all()
 
     if request.method == 'POST':
@@ -141,7 +142,7 @@ def show_auction(request: WSGIRequest, auction_pk):
             else:
                 request.user.watchlist.remove(auction)
             return redirect('auction', auction_pk=auction_pk)
-        
+
         elif action == 'add_comment':
             create_comment_form = CreateCommentForm(request.POST)
             if create_comment_form.is_valid():
@@ -149,8 +150,8 @@ def show_auction(request: WSGIRequest, auction_pk):
                 comment.user = request.user
                 comment.auction = auction
                 comment.save()
-                return redirect('auction', auction_pk=auction_pk)  
-                 
+                return redirect('auction', auction_pk=auction_pk)
+
         elif action == 'place_bid':
             bid_form = CreateBidForm(request.POST)
             bid_form.error_class = HiddenErrorList  # Hide default django errors
@@ -168,16 +169,15 @@ def show_auction(request: WSGIRequest, auction_pk):
                     bid.auction = auction
                     bid.save()
                     return redirect('auction', auction_pk=auction_pk)
-                
+
         elif action == 'close_auction' and is_owner:
             print("closing")
-            auction.is_active=False
+            auction.is_active = False
             if max_bid is not None:
                 auction.winning_bid = max_bid
 
             auction.save()
             return redirect('auction', auction_pk=auction_pk)
-
 
     context.update({'create_comment_form': create_comment_form,
                     'create_bid_form': bid_form})
