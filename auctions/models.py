@@ -34,7 +34,13 @@ class AuctionListing(models.Model):
                                         MaxValueValidator(99999.99),
                                         MinValueValidator(1)
                                     ])
-
+    price = models.DecimalField(max_digits=7, decimal_places=2,
+                                    verbose_name="Price",
+                                    default=1,
+                                    validators=[
+                                        MaxValueValidator(99999.99),
+                                        MinValueValidator(1)
+                                    ])
     img_url = models.URLField(
         max_length=1024, verbose_name="Listing image url", blank=True, null=True)
 
