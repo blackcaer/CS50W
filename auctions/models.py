@@ -34,15 +34,7 @@ class AuctionListing(models.Model):
                                         MaxValueValidator(99999.99),
                                         MinValueValidator(1)
                                     ])
-    # current_max_bid = models.DecimalField(max_digits=7, decimal_places=2,
-    #                                       verbose_name="Current bid for auction",
-    #                                       validators=[
-    #                                           MaxValueValidator(99999.99),
-    #                                           MinValueValidator(1)
-    #                                       ], blank=True, null=True)
-    # current_max_bid_user = models.ForeignKey(User,
-    #                                          on_delete=models.CASCADE, related_name='max_bid_auctions',
-    #                                          blank=True, null=True)
+
     img_url = models.URLField(
         max_length=1024, verbose_name="Listing image url", blank=True, null=True)
 
@@ -66,19 +58,22 @@ class Bid(models.Model):
                                 ], default=1, blank=False, null=False)
     auction = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name='bids', blank=False, null=True)
-    
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_bids',
-                                verbose_name='User who placed bid', blank=False, null=True)
+                             verbose_name='User who placed bid', blank=False, null=True)
+
     def __str__(self) -> str:
         return f"Bid for {self.price} on '{self.auction.title}' by {self.user.username} ({self.pk})"
 
+
 class Comment(models.Model):
-    content = models.CharField(max_length=1024,default="",blank=False)
+    content = models.CharField(max_length=1024, default="", blank=False)
     auction = models.ForeignKey(AuctionListing, on_delete=models.CASCADE,
-                                   related_name='comments',
-                                   verbose_name="Commented auction",
-                                   blank=False, null=True)
+                                related_name='comments',
+                                verbose_name="Commented auction",
+                                blank=False, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE,
-                                related_name='user_comments', verbose_name='User who wrote the comment', blank=False, null=True)
+                             related_name='user_comments', verbose_name='User who wrote the comment', blank=False, null=True)
+
     def __str__(self) -> str:
         return f"Comment on '{self.auction.title}' by {self.user.username} ({self.pk})"
