@@ -4,11 +4,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class User(AbstractUser):
-    def __str__(self) -> str:
-        return f"{self.username} {self.email}: pk={self.pk}"
-
     watchlist = models.ManyToManyField(
         'AuctionListing', related_name="users_watching", blank=True)
+
+    def __str__(self) -> str:
+        return f"User {self.username} {self.email} (pk={self.pk})"
 
 
 class Category(models.Model):
@@ -55,7 +55,7 @@ class AuctionListing(models.Model):
                                  verbose_name="Product category")
 
     def __str__(self) -> str:
-        return f"Auction '{self.title}' category:{self.category} owner:{self.owner} ({self.pk})"
+        return f"Auction '{self.title}'(pk={self.pk}) category:{self.category} owner:'{self.owner}'"
 
 
 class Bid(models.Model):
