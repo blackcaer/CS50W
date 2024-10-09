@@ -94,41 +94,67 @@ def show_auction(request: WSGIRequest, auction_pk):
     auction = AuctionListing.objects.get(pk=auction_pk)
     comments = auction.comments.all()
     context = {'auction': auction, 'comments': comments}
-    max_bid = auction.bids.order_by('-price').first()
-
-    if max_bid is None:
-        min_price = auction.start_bid
-    else:
-        min_price = round(max_bid.price + Decimal(0.01),2)
-
-    bid_form = CreateBidForm(initial={'price': min_price})
-    bid_form.fields['price'].widget.attrs['min'] = min_price
-    comment_form = CreateCommentForm()
 
     if not request.user.is_authenticated:
         return render(request, "auctions/auction_details.html", context)
+    
+    context['in_watchlist'] = auction in request.user.watchlist.all()
 
+    if not auction.is_active:
+        if auction.winning_bid is not None:
+            context['winning_price'] = auction.winning_bid.price
+            context['is_winner'] = request.user == auction.winning_bid.user
+
+        return render(request, "auctions/auction_details.html", context)
+
+    max_bid = auction.bids.order_by('-price').first()
+
+    if max_bid is None:
+        current_price = auction.start_bid
+        min_price = auction.start_bid
+    else:
+        current_price = max_bid.price
+        min_price = round(current_price + Decimal(0.01), 2)
+
+    bid_form = CreateBidForm(initial={'price': min_price})
+    
+    bid_form.fields['price'].widget.attrs['min'] = min_price # Set minimum price in Bid form
+
+    create_comment_form = CreateCommentForm()
+
+    is_owner = (auction.owner == request.user)
+    
+    context.update({'user': request.user,
+                    'create_comment_form': create_comment_form,
+                    'create_bid_form': bid_form,
+                    'is_owner': is_owner,
+                    'current_price':current_price})
+    
     watched_auctions = request.user.watchlist.all()
 
     if request.method == 'POST':
         action = request.POST.get('action')
+
         if action in ('add_to_watchlist', 'remove_from_watchlist'):
             if auction not in watched_auctions:
                 request.user.watchlist.add(auction)
             else:
                 request.user.watchlist.remove(auction)
             return redirect('auction', auction_pk=auction_pk)
+        
         elif action == 'add_comment':
-            comment_form = CreateCommentForm(request.POST)
-            if comment_form.is_valid():
-                comment = comment_form.save(commit=False)
+            create_comment_form = CreateCommentForm(request.POST)
+            if create_comment_form.is_valid():
+                comment = create_comment_form.save(commit=False)
                 comment.user = request.user
                 comment.auction = auction
                 comment.save()
-                return redirect('auction', auction_pk=auction_pk)
+                return redirect('auction', auction_pk=auction_pk)  
+                 
         elif action == 'place_bid':
             bid_form = CreateBidForm(request.POST)
-            bid_form.error_class = HiddenErrorList
+            bid_form.error_class = HiddenErrorList  # Hide default django errors
+
             if bid_form.is_valid():
                 bid = bid_form.save(commit=False)
                 if bid.price < min_price:
@@ -139,12 +165,18 @@ def show_auction(request: WSGIRequest, auction_pk):
                     bid.auction = auction
                     bid.save()
                     return redirect('auction', auction_pk=auction_pk)
+                
+        elif action == 'close_auction' and is_owner:
+            print("closing")
+            auction.is_active=False
+            if max_bid is not None:
+                auction.winning_bid = max_bid
+                
+            auction.save()
+            return redirect('auction', auction_pk=auction_pk)
 
-    in_watchlist = auction in request.user.watchlist.all()
 
-    context.update({'user': request.user,
-                    'in_watchlist': in_watchlist,
-                    'create_comment_form': comment_form,
+    context.update({'create_comment_form': create_comment_form,
                     'create_bid_form': bid_form})
 
     return render(request, "auctions/auction_details.html", context)
