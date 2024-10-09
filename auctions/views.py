@@ -9,21 +9,15 @@ from django.core.handlers.wsgi import WSGIRequest
 
 from .models import User, AuctionListing, Category, Bid
 from .forms import AuctionListingCreateFrom, AuctionListing, CreateCommentForm, CreateBidForm
-from .util import HiddenErrorList
+from .util import HiddenErrorList,update_price
 
 from decimal import Decimal
 
 
+
 def index(request: WSGIRequest):
     auctions = AuctionListing.objects.filter(is_active=True)
-    for auction in auctions:
-        max_bid = auction.bids.order_by('-price').first()
-        if max_bid is None:
-            max_bid = auction.start_bid
-        else:
-            max_bid = max_bid.price
-        auction.price = max_bid # ik it's not the best but I don't have time for this xd
-
+    update_price(auctions)
     return render(request, "auctions/show_auctions.html", {'auctions': auctions, 'header': 'Active Listings'})
 
 
@@ -194,6 +188,7 @@ def show_auction(request: WSGIRequest, auction_pk):
 
 def show_watchlist(request):
     watched_auctions = request.user.watchlist.all()
+    update_price(watched_auctions)
     return render(request, 'auctions/show_auctions.html', {'auctions': watched_auctions, 'header': 'Watched listings'})
 
 
@@ -204,4 +199,5 @@ def show_categories(request):
 
 def show_category_listings(request, category_name):
     category_listings = Category.objects.get(name=category_name).auctions.all()
+    update_price(category_listings)
     return render(request, 'auctions/show_auctions.html', {'auctions': category_listings, 'header': f'Category: {category_name}'})
