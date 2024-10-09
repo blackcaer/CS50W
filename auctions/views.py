@@ -7,8 +7,11 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.core.handlers.wsgi import WSGIRequest
 
-from .models import User, AuctionListing, Category
-from .forms import AuctionListingCreateFrom, AuctionListing, CreateCommentForm
+from .models import User, AuctionListing, Category, Bid
+from .forms import AuctionListingCreateFrom, AuctionListing, CreateCommentForm, CreateBidForm
+from .util import HiddenErrorList
+
+from decimal import Decimal
 
 
 def index(request: WSGIRequest):
@@ -90,35 +93,59 @@ def create_auction(request):
 def show_auction(request: WSGIRequest, auction_pk):
     auction = AuctionListing.objects.get(pk=auction_pk)
     comments = auction.comments.all()
-    context = {'auction': auction,'comments':comments}
+    context = {'auction': auction, 'comments': comments}
+    max_bid = auction.bids.order_by('-price').first()
+
+    if max_bid is None:
+        min_price = auction.start_bid
+    else:
+        min_price = round(max_bid.price + Decimal(0.01),2)
+
+    bid_form = CreateBidForm(initial={'price': min_price})
+    bid_form.fields['price'].widget.attrs['min'] = min_price
+    comment_form = CreateCommentForm()
 
     if not request.user.is_authenticated:
         return render(request, "auctions/auction_details.html", context)
-    
+
     watched_auctions = request.user.watchlist.all()
 
     if request.method == 'POST':
         action = request.POST.get('action')
-        if action in ('add_to_watchlist','remove_from_watchlist'):
+        if action in ('add_to_watchlist', 'remove_from_watchlist'):
             if auction not in watched_auctions:
                 request.user.watchlist.add(auction)
             else:
                 request.user.watchlist.remove(auction)
+            return redirect('auction', auction_pk=auction_pk)
         elif action == 'add_comment':
-            form = CreateCommentForm(request.POST)
-            if form.is_valid():
-                comment = form.save(commit=False)
+            comment_form = CreateCommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
                 comment.user = request.user
                 comment.auction = auction
                 comment.save()
-        return redirect('auction',auction_pk=auction_pk)
+                return redirect('auction', auction_pk=auction_pk)
+        elif action == 'place_bid':
+            bid_form = CreateBidForm(request.POST)
+            bid_form.error_class = HiddenErrorList
+            if bid_form.is_valid():
+                bid = bid_form.save(commit=False)
+                if bid.price < min_price:
+                    bid_form.add_error(
+                        'price', f"Bid must be at least {min_price:.2f}")
+                else:
+                    bid.user = request.user
+                    bid.auction = auction
+                    bid.save()
+                    return redirect('auction', auction_pk=auction_pk)
 
-    create_comment_form = CreateCommentForm()
     in_watchlist = auction in request.user.watchlist.all()
-    
+
     context.update({'user': request.user,
                     'in_watchlist': in_watchlist,
-                    'create_comment_form':create_comment_form})
+                    'create_comment_form': comment_form,
+                    'create_bid_form': bid_form})
 
     return render(request, "auctions/auction_details.html", context)
 
