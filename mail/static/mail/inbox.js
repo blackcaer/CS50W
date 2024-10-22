@@ -61,6 +61,13 @@ function createMailElement(mail) {
 
   mailDiv.innerHTML = mailContent;
   mailDiv.addEventListener('click', () => {
+    fetch('emails/'+mail.id,
+      {
+        method: 'PUT',
+        body: JSON.stringify({
+          read:true
+        })
+      });
     show_email(mail.id);
   });
   
