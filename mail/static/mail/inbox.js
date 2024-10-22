@@ -45,17 +45,67 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
+function createMailElement(mail) {
+  const mailDiv = document.createElement('div');
+  mailDiv.classList.add('border', 'rounded', 'border-secondary', 'p-3', 'mb-2', 'shadow');
+  if(mail.read)
+    mailDiv.classList.add('bg-dark','text-light')
+
+  const mailContent = `
+    <div class="row">
+      <div class="col text-left"><b>${mail.sender}</b></div>
+      <div class="col text-right">${mail.timestamp}</div>
+    </div>
+    <div>${mail.subject}</div>
+  `;
+
+  mailDiv.innerHTML = mailContent;
+  mailDiv.addEventListener('click', () => {
+    show_email(mail.id);
+  });
+  
+  return mailDiv;
+}
+
+function show_email(id)
+{
+  
+  document.querySelector('#emails-view').innerHTML = '';
+  fetch('/emails/'+id)
+  .then(response => response.json())
+  .then(result => {
+    console.log(result);
+    let mail = result;
+    console.log("maail:");
+    console.log(mail);
+    const pageContent = `
+      <div>
+      <hr>
+      <b>Subject: </b>${mail.subject}<br>
+      <b>From: </b>${mail.sender}<br>
+      <b>To: </b>${mail.recipients}<br>
+      <b>Timestamp: </b>${mail.timestamp}<br>
+      <hr>
+      </div>
+      <div>${mail.body}
+      </div>
+    `;
+
+    document.querySelector('#emails-view').innerHTML = pageContent;
+  })
+
+}
+
 function load_mailbox(mailbox) {
   fetch('emails/'+mailbox)
   .then(response => response.json())
-  .then(mail_list => {
-    console.log(mail_list);
+  .then(mailList => {
+    console.log(mailList);
 
-    mail_list.forEach(mail => {
-      let mail_div = document.createElement('div');
-      mail_div.innerHTML = 'mail'+mail.id;
-      mail_div.addEventListener('click',()=>{console.log('This element has been clicked!'+mail.id)})
-      document.querySelector('#emails-view').append(mail_div);
+    document.querySelector('#emails-view').innerHTML = '';
+    mailList.forEach(mail => {
+      const mailElement = createMailElement(mail);
+      document.querySelector('#emails-view').append(mailElement);
     });
   }) 
 
