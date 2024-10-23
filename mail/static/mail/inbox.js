@@ -42,17 +42,25 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
-function set_archived(id, value) {
-  fetch('emails/' + id,
-    {
+
+function update_archived(id, event) {
+  const isBtnArchiving = event.target.textContent === "Archive";
+
+  fetch('emails/' + id, {
       method: 'PUT',
       body: JSON.stringify({
-        archived: value
+        archived: isBtnArchiving
       })
-    });
+    })
+    .then(() => {
+      event.target.textContent = isBtnArchiving ? "Unarchive" : "Archive";
+    })
+    .catch(error => console.log("Błąd:", error));
 }
 
-function create_mail_element(mail) {
+
+
+function create_mail_element(mail,show_archive_btn) {
   const mailDiv = document.createElement('div');
   mailDiv.classList.add('border', 'rounded', 'border-secondary', 'p-3', 'mb-2', 'shadow');
   if (mail.read)
@@ -75,7 +83,7 @@ function create_mail_element(mail) {
           read: true
         })
       });
-    show_email(mail.id);
+    show_email(mail,show_archive_btn=show_archive_btn);
   });
 
   return mailDiv;
@@ -87,45 +95,45 @@ function load_mailbox(mailbox) {
     .then(response => response.json())
     .then(mailList => {
       document.querySelector('#emails-view').innerHTML = '';
+      console.log(mailList);
       mailList.forEach(mail => {
-        const mailElement = create_mail_element(mail);
+        const mailElement = create_mail_element(mail,show_archive_btn = !(mailbox=='sent'));
         document.querySelector('#emails-view').append(mailElement);
       });
     })
 
-  // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
-  // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
 }
 
-function show_email(id) {
+function get_archive_button(is_archived)
+{
+  return  `<button id="archive-button" class="btn btn-primary mt-3">` + 
+    (is_archived ? "Unarchive" : "Archive") + `</button>` ;
+}
+
+function show_email(mail,show_archive_btn) {
 
   document.querySelector('#emails-view').innerHTML = '';
-  fetch('/emails/' + id)
-    .then(response => response.json())
-    .then(result => {
-      console.log(result);
-      let mail = result;
-      console.log("maail:");
-      console.log(mail);
-      const pageContent = `
-      <div>
+  
+  let archive_button = (show_archive_btn)? get_archive_button(mail.archived) : "";
+  const pageContent = `
+    <div>
       <hr>
       <b>Subject: </b>${mail.subject}<br>
       <b>From: </b>${mail.sender}<br>
       <b>To: </b>${mail.recipients}<br>
       <b>Timestamp: </b>${mail.timestamp}<br>
       <hr>
-      </div>
-      <div>${mail.body}
-      </div>
-    `;
+    </div>
+    <div>
+      ${archive_button}
+      ${mail.body}
+    </div>`;
 
-      document.querySelector('#emails-view').innerHTML = pageContent;
-    })
-
+  document.querySelector('#emails-view').innerHTML = pageContent;
+  document.querySelector('#archive-button')?.addEventListener('click', (event)=>update_archived(mail.id,event));
 }
