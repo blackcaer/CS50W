@@ -30,20 +30,18 @@ function submit_email(event) {
     })
 }
 
-function compose_email() {
+function compose_email(recipients='', subject='', body='') {
 
-  // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  document.querySelector('#compose-recipients').value = recipients;
+  document.querySelector('#compose-subject').value = subject;
+  document.querySelector('#compose-body').value = body;
 }
 
 
-function update_archived(id, event) {
+function update_archived(event,id) {
   const isBtnArchiving = event.target.textContent === "Archive";
 
   fetch('emails/' + id, {
@@ -116,11 +114,17 @@ function get_archive_button(is_archived)
     (is_archived ? "Unarchive" : "Archive") + `</button>` ;
 }
 
+function get_reply_button()
+{
+  return `<button id="reply-button" class="btn btn-primary mt-3" value="abc">Reply</button>`
+}
+
 function show_email(mail,show_archive_btn) {
 
   document.querySelector('#emails-view').innerHTML = '';
   
   let archive_button = (show_archive_btn)? get_archive_button(mail.archived) : "";
+  let reply_button = get_reply_button(mail.archived);
   const pageContent = `
     <div>
       <hr>
@@ -128,13 +132,20 @@ function show_email(mail,show_archive_btn) {
       <b>From: </b>${mail.sender}<br>
       <b>To: </b>${mail.recipients}<br>
       <b>Timestamp: </b>${mail.timestamp}<br>
+       ${reply_button} ${archive_button}
       <hr>
     </div>
     <div>
-      ${archive_button}
       ${mail.body}
     </div>`;
 
   document.querySelector('#emails-view').innerHTML = pageContent;
-  document.querySelector('#archive-button')?.addEventListener('click', (event)=>update_archived(mail.id,event));
+  document.querySelector('#archive-button')?.addEventListener('click', (event)=>update_archived(event,mail.id));
+  document.querySelector('#reply-button').addEventListener('click', ()=>make_reply(mail));
+}
+
+function make_reply(mail)
+{
+  re = mail.subject.startsWith("Re:") ? '' : 'Re: '
+  compose_email(recipients=mail.sender,subject=re+mail.subject,body=`On ${mail.timestamp} ${mail.sender} wrote: \n`+mail.body+'\n');
 }
