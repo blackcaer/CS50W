@@ -1,13 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-  // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
   document.querySelector('#compose-submit').addEventListener('click', submit_email)
-  // By default, load the inbox
+
   load_mailbox('inbox');
 });
 
@@ -30,7 +29,7 @@ function submit_email(event) {
     })
 }
 
-function compose_email(recipients='', subject='', body='') {
+function compose_email(recipients = '', subject = '', body = '') {
 
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
@@ -40,16 +39,15 @@ function compose_email(recipients='', subject='', body='') {
   document.querySelector('#compose-body').value = body;
 }
 
-
-function update_archived(event,id) {
+function update_archived(event, id) {
   const isBtnArchiving = event.target.textContent === "Archive";
 
   fetch('emails/' + id, {
-      method: 'PUT',
-      body: JSON.stringify({
-        archived: isBtnArchiving
-      })
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: isBtnArchiving
     })
+  })
     .then(() => {
       load_mailbox('inbox');
       //event.target.textContent = isBtnArchiving ? "Unarchive" : "Archive";
@@ -57,9 +55,7 @@ function update_archived(event,id) {
     .catch(error => console.log("Błąd:", error));
 }
 
-
-
-function create_mail_element(mail,show_archive_btn) {
+function create_mail_element(mail, show_archive_btn) {
   const mailDiv = document.createElement('div');
   mailDiv.classList.add('border', 'rounded', 'border-secondary', 'p-3', 'mb-2', 'shadow');
   if (mail.read)
@@ -82,12 +78,11 @@ function create_mail_element(mail,show_archive_btn) {
           read: true
         })
       });
-    show_email(mail,show_archive_btn=show_archive_btn);
+    show_email(mail, show_archive_btn = show_archive_btn);
   });
 
   return mailDiv;
 }
-
 
 function load_mailbox(mailbox) {
   fetch('emails/' + mailbox)
@@ -96,7 +91,7 @@ function load_mailbox(mailbox) {
       document.querySelector('#emails-view').innerHTML = '';
       console.log(mailList);
       mailList.forEach(mail => {
-        const mailElement = create_mail_element(mail,show_archive_btn = !(mailbox=='sent'));
+        const mailElement = create_mail_element(mail, show_archive_btn = !(mailbox == 'sent'));
         document.querySelector('#emails-view').append(mailElement);
       });
     })
@@ -108,22 +103,20 @@ function load_mailbox(mailbox) {
 
 }
 
-function get_archive_button(is_archived)
-{
-  return  `<button id="archive-button" class="btn btn-primary mt-3">` + 
-    (is_archived ? "Unarchive" : "Archive") + `</button>` ;
+function get_archive_button(is_archived) {
+  return `<button id="archive-button" class="btn btn-primary mt-3">` +
+    (is_archived ? "Unarchive" : "Archive") + `</button>`;
 }
 
-function get_reply_button()
-{
+function get_reply_button() {
   return `<button id="reply-button" class="btn btn-primary mt-3" value="abc">Reply</button>`
 }
 
-function show_email(mail,show_archive_btn) {
+function show_email(mail, show_archive_btn) {
 
   document.querySelector('#emails-view').innerHTML = '';
-  
-  let archive_button = (show_archive_btn)? get_archive_button(mail.archived) : "";
+
+  let archive_button = (show_archive_btn) ? get_archive_button(mail.archived) : "";
   let reply_button = get_reply_button(mail.archived);
   const pageContent = `
     <div>
@@ -140,12 +133,11 @@ function show_email(mail,show_archive_btn) {
     </div>`;
 
   document.querySelector('#emails-view').innerHTML = pageContent;
-  document.querySelector('#archive-button')?.addEventListener('click', (event)=>update_archived(event,mail.id));
-  document.querySelector('#reply-button').addEventListener('click', ()=>make_reply(mail));
+  document.querySelector('#archive-button')?.addEventListener('click', (event) => update_archived(event, mail.id));
+  document.querySelector('#reply-button').addEventListener('click', () => make_reply(mail));
 }
 
-function make_reply(mail)
-{
+function make_reply(mail) {
   re = mail.subject.startsWith("Re:") ? '' : 'Re: '
-  compose_email(recipients=mail.sender,subject=re+mail.subject,body=`On ${mail.timestamp} ${mail.sender} wrote: \n`+mail.body+'\n');
+  compose_email(recipients = mail.sender, subject = re + mail.subject, body = `On ${mail.timestamp} ${mail.sender} wrote: \n` + mail.body + '\n');
 }
