@@ -53,7 +53,8 @@ function update_archived(id, event) {
       })
     })
     .then(() => {
-      event.target.textContent = isBtnArchiving ? "Unarchive" : "Archive";
+      load_mailbox('inbox');
+      //event.target.textContent = isBtnArchiving ? "Unarchive" : "Archive";
     })
     .catch(error => console.log("Błąd:", error));
 }
