@@ -136,7 +136,7 @@ function show_email(mail,show_archive_btn) {
       <hr>
     </div>
     <div>
-      ${mail.body}
+      ${mail.body.replace(/\n/g, '<br>')}
     </div>`;
 
   document.querySelector('#emails-view').innerHTML = pageContent;
