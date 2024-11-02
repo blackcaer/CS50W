@@ -1,6 +1,8 @@
 entries/
 
+.idea/
 # Django #
+*.po
 *.log
 *.pot
 *.pyc
