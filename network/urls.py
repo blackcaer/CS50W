@@ -10,4 +10,8 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("create_post", views.create_post, name="create_post"),
     path("profile/<int:id>", views.show_profile, name="show_profile"),
+
+     # API routes
+    path("get_posts", views.get_posts, name="get_posts"),
+    
 ]

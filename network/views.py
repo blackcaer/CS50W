@@ -4,13 +4,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User,Post
 
 
 def index(request):
-    posts = Post.objects.all().order_by('-date_created')
-    return render(request, "network/index.html",{'posts':posts})
+    return render(request, "network/index.html")
 
 
 def login_view(request):
@@ -75,6 +77,12 @@ def create_post(request):
         return render(request,'network/create_post.html')
     
 def show_profile(request,id):
+    profile = User.objects.get(id=id)
+    return render(request,'network/profile.html',{'profile':profile})
 
-    profile = User.objects.get(pk=id)
-    return render(request,'network/index.html',{'profile':profile})
+@csrf_exempt
+def get_posts(request):
+    posts = Post.objects.all().order_by('-date_created')
+    #post=posts[0]       
+    #return JsonResponse(post.serialize())
+    return JsonResponse([post.serialize() for post in posts], safe=False)
