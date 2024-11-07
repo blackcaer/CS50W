@@ -1,9 +1,0 @@
-{% extends "network/layout.html" %}
-
-{% block body %}
-<form method="POST" class=" m-2">
-    {% csrf_token %}
-    <textarea id="content" name="content" class="form-control" placeholder="How are you feeling?"></textarea>
-    <button id="submit_btn" value="submit" type="submit" class="btn btn-primary mt-2"> Post post </button>
-
-{% endblock %}
