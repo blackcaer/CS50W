@@ -1,18 +1,18 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User,Post
+from .models import User, Post
 
 
 def index(request):
-    if request.method=='POST' and request.user.is_authenticated:
+    if request.method == 'POST' and request.user.is_authenticated:
         new_post = Post(author=request.user,
                         content=request.POST['content'])
         new_post.save()
@@ -72,25 +72,29 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+
 @login_required
 def create_post(request):
-    if request.method=='POST':
+    if request.method == 'POST':
         new_post = Post(author=request.user,
                         content=request.POST['content'])
         new_post.save()
         return redirect('index')
     else:
-        return render(request,'network/create_post.html')
-    
-def show_profile(request,id):
+        return render(request, 'network/create_post.html')
+
+
+def show_profile(request, id):
     profile = User.objects.get(id=id)
-    return render(request,'network/profile.html',{'profile':profile})
+    return render(request, 'network/profile.html', {'profile': profile})
+
 
 def get_new_posts(request):
     posts = Post.objects.all().order_by('-date_created')
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
-def get_user_posts(request,id):
-    #posts = Post.objects.all().order_by('-date_created')
+
+def get_user_posts(request, id):
+    # posts = Post.objects.all().order_by('-date_created')
     posts = User.objects.get(id=id).posts.all()
     return JsonResponse([post.serialize() for post in posts], safe=False)

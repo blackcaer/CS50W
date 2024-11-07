@@ -3,31 +3,31 @@
 
 {% block script %}
 
-    <script>
-        const urlParts = window.location.pathname.split('/');
-        const user_id = parseInt(urlParts[urlParts.length - 1]);
-    </script>
-    <script type='module' src="{% static 'network/profile.js' %}"></script>
+<script>
+    const urlParts = window.location.pathname.split('/');
+    const user_id = parseInt(urlParts[urlParts.length - 1]);
+</script>
+<script type='module' src="{% static 'network/profile.js' %}"></script>
 
 {% endblock %}
 
 {% block body %}
 
-    <div class="col mt-2">
-        <div class="row mt-2">
-            <h2 class="col text-left font-weight-bold  ">{{profile.username}} </h4>
-                
+<div class="col mt-2">
+    <div class="row mt-2">
+        <h2 class="col text-left font-weight-bold  ">{{profile.username}} </h4>
+
             <div class="col">following:{{profile.following.count}} </div>
             <div class="col">followers:{{profile.followers.count}} </div>
-        
+
             {% if request.user != profile %}
             <div class="col text-capitalize text-right">
                 <button href="#" type="submit" name="edit" class="btn btn-primary">Follow/Unfollow(TODO)</a>
             </div>
             {% endif %}
 
-        </div>
     </div>
-    <div class="col mt-2" id="user_posts_container"></div>
-    
+</div>
+<div class="col mt-2" id="user_posts_container"></div>
+
 {% endblock %}
