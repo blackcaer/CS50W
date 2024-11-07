@@ -12,7 +12,13 @@ from .models import User,Post
 
 
 def index(request):
-    return render(request, "network/index.html")
+    if request.method=='POST' and request.user.is_authenticated:
+        new_post = Post(author=request.user,
+                        content=request.POST['content'])
+        new_post.save()
+        return redirect('index')
+    else:
+        return render(request, "network/index.html")
 
 
 def login_view(request):
@@ -77,12 +83,14 @@ def create_post(request):
         return render(request,'network/create_post.html')
     
 def show_profile(request,id):
-    profile = User.objects.get(id=id)
-    return render(request,'network/profile.html',{'profile':profile})
+    user = User.objects.get(id=id)
+    return render(request,'network/profile.html',{'user':user})
 
-@csrf_exempt
-def get_posts(request):
+def get_new_posts(request):
     posts = Post.objects.all().order_by('-date_created')
-    #post=posts[0]       
-    #return JsonResponse(post.serialize())
+    return JsonResponse([post.serialize() for post in posts], safe=False)
+
+def get_user_posts(request,id):
+    #posts = Post.objects.all().order_by('-date_created')
+    posts = User.objects.get(id=id).posts.all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
