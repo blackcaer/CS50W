@@ -1,26 +1,33 @@
 {% extends "network/layout.html" %}
+{% load static %}
+
+{% block script %}
+
+    <script>
+        const urlParts = window.location.pathname.split('/');
+        const user_id = parseInt(urlParts[urlParts.length - 1]);
+    </script>
+    <script type='module' src="{% static 'network/profile.js' %}"></script>
+
+{% endblock %}
 
 {% block body %}
-    <div class="col">
 
-        <!-- name, followers,posts rev chrono, follow btn unfollow btn, -->
-
-    <div class="col mt-2 border border-secondary">
+    <div class="col mt-2">
         <div class="row mt-2">
-            <h4 class="col text-left font-weight-bold  ">{{post.author.username}} </h4>
-            <div class="col text-right">{{post.date_created}} </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col text-capitalize">
-                {% if request.user == post.author %}
-                <a href="#" type="submit" name="edit" class="d-block">Edit</a>
-                {% endif %}
-                {{post.content}} 
+            <h2 class="col text-left font-weight-bold  ">{{user.username}} </h4>
+                
+            <div class="col">following:{{user.following.count}} </div>
+            <div class="col">followers:{{user.followers.count}} </div>
+        
+            {% if request.user == user %}
+            <div class="col text-capitalize text-right">
+                <button href="#" type="submit" name="edit" class="btn btn-primary">Follow/Unfollow(TODO)</a>
             </div>
-        </div>
-        <div class="row my-2">
-            <div class="col">{{post.get_likes_count}} </div>
+            {% endif %}
+
         </div>
     </div>
-    </div>
+    <div class="col mt-2" id="user_posts_container"></div>
+    
 {% endblock %}
