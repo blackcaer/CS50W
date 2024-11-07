@@ -2,37 +2,11 @@
 {% load static %}
 
 {% block script %}
-        <script src="{% static 'network/index.js' %}"></script>
+        <script type='module' src="{% static 'network/index.js' %}"></script>
 {% endblock %}
 
 {% block body %}
-    <div class="col">
-        {% for post in posts %}
-        <div class="col mt-2 border border-secondary">
-            <div class="row mt-2">
-                <h4 class="col text-left font-weight-bold">
-                    <a href="{% url 'show_profile' user.pk %}">
-                        {{post.author.username}} 
-                    </a>
-                </h4>
-                <div class="col text-right">{{post.date_created}} </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col text-capitalize">
-                    {% if request.user == post.author %}
-                    <a href="#" type="submit" name="edit" class="d-block">Edit</a>
-                    {% endif %}
-                    {{post.content}} 
-                </div>
-            </div>
-            <div class="row my-2">
-                <div class="col">{{post.get_likes_count}} </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="col" id="posts_wall">
+    <div class="col" id="main_container">
 
     </div>
 {% endblock %}
