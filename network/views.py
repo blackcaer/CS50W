@@ -95,6 +95,5 @@ def get_new_posts(request):
 
 
 def get_user_posts(request, id):
-    # posts = Post.objects.all().order_by('-date_created')
-    posts = User.objects.get(id=id).posts.all()
+    posts = User.objects.get(id=id).posts.all().order_by('-date_created')
     return JsonResponse([post.serialize() for post in posts], safe=False)
