@@ -15,12 +15,12 @@
 
     <div class="col mt-2">
         <div class="row mt-2">
-            <h2 class="col text-left font-weight-bold  ">{{user.username}} </h4>
+            <h2 class="col text-left font-weight-bold  ">{{profile.username}} </h4>
                 
-            <div class="col">following:{{user.following.count}} </div>
-            <div class="col">followers:{{user.followers.count}} </div>
+            <div class="col">following:{{profile.following.count}} </div>
+            <div class="col">followers:{{profile.followers.count}} </div>
         
-            {% if request.user == user %}
+            {% if request.user != profile %}
             <div class="col text-capitalize text-right">
                 <button href="#" type="submit" name="edit" class="btn btn-primary">Follow/Unfollow(TODO)</a>
             </div>

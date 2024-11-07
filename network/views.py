@@ -83,8 +83,8 @@ def create_post(request):
         return render(request,'network/create_post.html')
     
 def show_profile(request,id):
-    user = User.objects.get(id=id)
-    return render(request,'network/profile.html',{'user':user})
+    profile = User.objects.get(id=id)
+    return render(request,'network/profile.html',{'profile':profile})
 
 def get_new_posts(request):
     posts = Post.objects.all().order_by('-date_created')
