@@ -8,10 +8,13 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
+    path("following", views.show_posts_by_followed_authors, name="following"),
 
     path("profile/<int:id>", views.show_profile, name="show_profile"),
 
     # API routes
+    path("add_post", views.add_post, name="add_post"),
+
     path("get_posts", views.get_new_posts, name="get_posts"),
     path("get_posts/user/<int:id>", views.get_user_posts, name="get_user_posts"),
 

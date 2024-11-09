@@ -7,19 +7,25 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .models import User, Post
 
 
 def index(request):
-    if request.method == 'POST' and request.user.is_authenticated:
-        new_post = Post(author=request.user,
-                        content=request.POST['content'])
-        new_post.save()
-        return redirect('index')
-    else:
+    if request.method == 'GET':
         return render(request, "network/index.html")
 
+def add_post(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        data = json.loads(request.body)
+        new_post = Post(author=request.user, content=data['content'])
+        print("POOOST",new_post)
+        new_post.save()
+        
+        return JsonResponse(new_post.serialize())
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def login_view(request):
     if request.method == "POST":
