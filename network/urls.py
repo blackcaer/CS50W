@@ -15,4 +15,7 @@ urlpatterns = [
     path("get_posts", views.get_new_posts, name="get_posts"),
     path("get_posts/user/<int:id>", views.get_user_posts, name="get_user_posts"),
 
+    path("profile/<int:id>/is_followed", views.is_followed, name="is_followed"),
+    path("profile/<int:id>/toggle_follow", views.toggle_follow, name="toggle_follow"),
+
 ]

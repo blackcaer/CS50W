@@ -97,3 +97,24 @@ def get_new_posts(request):
 def get_user_posts(request, id):
     posts = User.objects.get(id=id).posts.all().order_by('-date_created')
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+
+@login_required
+def is_followed(request, id):
+    """Check if the logged-in user follows the user with the given ID."""
+    is_followed = request.user.following.filter(id=id).exists()
+    return JsonResponse({"is_followed": is_followed})
+
+@login_required
+def toggle_follow(request, id):
+    """Toggle follow/unfollow for the user with the given ID."""
+    profile_user = User.objects.get(id=id)
+    if profile_user.followers.filter(id=request.user.id).exists():
+        # Unfollow if already following
+        profile_user.followers.remove(request.user)
+        is_followed = False
+    else:
+        # Follow if not following
+        profile_user.followers.add(request.user)
+        is_followed = True
+    return JsonResponse({"is_followed": is_followed})
