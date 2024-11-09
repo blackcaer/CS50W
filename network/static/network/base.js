@@ -54,6 +54,26 @@ export async function fetch_user_posts(id) {
     return await response.json();
 }
 
+function get_pagination(num_sites)
+{
+    let element = `<nav aria-label="Page navigation example">
+        <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
+    
+    for (let i = 1; i <= num_sites; i++) {
+        element += `<li class="page-item"><a class="page-link" href="#">${i}</a></li>`;
+    }
+          
+    element+=`<li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>`;
+    
+    const div = document.createElement('div')
+    div.classList.add('mt-2')
+    div.innerHTML=element;
+    return div
+}
+
 export function show_posts(posts, selector, add_createpost = false) {
     if (add_createpost)
         document.querySelector(selector).append(get_createpost_element());
@@ -65,5 +85,7 @@ export function show_posts(posts, selector, add_createpost = false) {
     posts.forEach(post => {
         posts_div.append(get_post_element(post));
     })
+
+    posts_div.append(get_pagination(3));
 }
 
