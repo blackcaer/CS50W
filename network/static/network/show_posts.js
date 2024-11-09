@@ -1,12 +1,15 @@
 import * as base from './base.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-    base.fetch_new_posts()
-        .then(posts => {
-            base.show_posts(posts, '#main_container', true);
-        });
+    const viewFollowing = window.location.pathname === '/following'
+    const fetchPosts = (viewFollowing) 
+    ? base.fetch_posts_by_followed
+    : base.fetch_new_posts;
 
-
+    fetchPosts().then(posts => {
+        base.show_posts(posts, '#main_container', isAuthenticated && !viewFollowing);
+    });
+        
     document.addEventListener('submit', async function (event) {
         if (event.target.getAttribute('data-role') === 'create-post') {
             event.preventDefault();
