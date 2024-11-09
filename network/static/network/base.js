@@ -27,11 +27,6 @@ export function get_post_element(post)
     return postDiv;
 }
 
-export function get_CRSF_input()
-{
-    return `<input type="hidden" name="csrfmiddlewaretoken" value="${get_CRSF_token()}">`;
-}
-
 export function get_CRSF_token()
 {
     return document.querySelector("input[name=csrfmiddlewaretoken]").value;
@@ -40,10 +35,9 @@ export function get_CRSF_token()
 export function get_createpost_element()
 {
     let element = document.createElement('div');
-    element.innerHTML =  `<form method="POST" class=" mt-4">
-    ${get_CRSF_input()}
-    <textarea id="content" name="content" class="form-control" placeholder="How are you feeling?"></textarea>
-    <button id="submit_btn" value="submit" type="submit" class="btn btn-primary mt-2"> Create post </button>
+    element.innerHTML =  `<form data-role="create-post" class=" mt-4">
+    <textarea name="content" class="form-control" placeholder="How are you feeling?"></textarea>
+    <button type="submit" class="btn btn-primary mt-2">Create post</button>
     </form>`;
     return element;
 }
@@ -64,8 +58,13 @@ export function show_posts(posts,selector,add_createpost=false)
 {
     if (add_createpost)
         document.querySelector(selector).append(get_createpost_element());
+
+    const posts_div = document.createElement('div');
+    posts_div.setAttribute('data-role', 'posts-container');
+    document.querySelector(selector).append(posts_div);
+
     posts.forEach(post => {
-        document.querySelector(selector).append(get_post_element(post));
+        posts_div.append(get_post_element(post));
     })
 }
 
