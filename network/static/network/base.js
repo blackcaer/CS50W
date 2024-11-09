@@ -29,7 +29,12 @@ export function get_post_element(post)
 
 export function get_CRSF_input()
 {
-    return `<input type="hidden" name="csrfmiddlewaretoken" value="${CRSF_TOKEN}">`
+    return `<input type="hidden" name="csrfmiddlewaretoken" value="${get_CRSF_token()}">`;
+}
+
+export function get_CRSF_token()
+{
+    return document.querySelector("input[name=csrfmiddlewaretoken]").value;
 }
 
 export function get_createpost_element()
