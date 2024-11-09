@@ -11,10 +11,10 @@ import json
 
 from .models import User, Post
 
-
-def index(request):
-    if request.method == 'GET':
-        return render(request, "network/index.html")
+def show_posts(request):
+    if request.path == '/following' and not request.user.is_authenticated:
+        return redirect('index')
+    return render(request, "network/show_posts.html")
 
 def add_post(request):
     if request.method == 'POST' and request.user.is_authenticated:
@@ -104,6 +104,11 @@ def get_user_posts(request, id):
     posts = User.objects.get(id=id).posts.all().order_by('-date_created')
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
+def get_posts_by_followed(request):
+    followed_users = request.user.following.all()
+    posts = Post.objects.filter(author__in=followed_users).order_by('-date_created')
+
+    return JsonResponse([post.serialize() for post in posts], safe=False)
 
 @login_required
 def is_followed(request, id):
