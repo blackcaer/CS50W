@@ -11,21 +11,24 @@ import json
 
 from .models import User, Post
 
+
 def show_posts(request):
     if request.path == '/following' and not request.user.is_authenticated:
         return redirect('index')
     return render(request, "network/show_posts.html")
 
+
 def add_post(request):
     if request.method == 'POST' and request.user.is_authenticated:
         data = json.loads(request.body)
         new_post = Post(author=request.user, content=data['content'])
-        print("POOOST",new_post)
+        print("POOOST", new_post)
         new_post.save()
-        
+
         return JsonResponse(new_post.serialize())
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
 
 def login_view(request):
     if request.method == "POST":
@@ -104,17 +107,21 @@ def get_user_posts(request, id):
     posts = User.objects.get(id=id).posts.all().order_by('-date_created')
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
+
 def get_posts_by_followed(request):
     followed_users = request.user.following.all()
-    posts = Post.objects.filter(author__in=followed_users).order_by('-date_created')
+    posts = Post.objects.filter(
+        author__in=followed_users).order_by('-date_created')
 
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
 
 @login_required
 def is_followed(request, id):
     """Check if the logged-in user follows the user with the given ID."""
     is_followed = request.user.following.filter(id=id).exists()
     return JsonResponse({"is_followed": is_followed})
+
 
 @login_required
 def toggle_follow(request, id):

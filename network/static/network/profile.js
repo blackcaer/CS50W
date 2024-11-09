@@ -7,20 +7,19 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(posts => {
             base.show_posts(posts, '#user_posts_container');
         });
-    
-    if(followButton !== null)
+
+    if (followButton !== null)
         handle_follow_btn(followButton)
-  
+
 });
 
-function handle_follow_btn(followButton)
-{
+function handle_follow_btn(followButton) {
     fetch(`/profile/${user_id}/is_followed`)
-    .then(response => response.json())
-    .then(data => {
-        followButton.innerHTML = data.is_followed ? "Unfollow" : "Follow";
-        followButton.style.visibility = "visible";
-    });
+        .then(response => response.json())
+        .then(data => {
+            followButton.innerHTML = data.is_followed ? "Unfollow" : "Follow";
+            followButton.style.visibility = "visible";
+        });
 
     followButton.addEventListener("click", () => {
         fetch(`/profile/${user_id}/toggle_follow`, {
@@ -29,10 +28,10 @@ function handle_follow_btn(followButton)
                 "X-CSRFToken": base.get_CRSF_token()
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            followButton.innerHTML = data.is_followed ? "Unfollow" : "Follow";
-        });
-    });  
+            .then(response => response.json())
+            .then(data => {
+                followButton.innerHTML = data.is_followed ? "Unfollow" : "Follow";
+            });
+    });
 }
 

@@ -3,17 +3,14 @@ from django.db import models
 
 
 class User(AbstractUser):
-
     following = models.ManyToManyField(
         'self', symmetrical=False, related_name='followers')
 
     def serialize(self):
-       
         return {
             "id": self.id,
             "username": self.username
-        }
-    
+            }
 
     def __str__(self) -> str:
         return f"User {self.username} {self.email} (pk={self.pk})"

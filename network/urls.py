@@ -21,6 +21,7 @@ urlpatterns = [
     path("get_posts_by_followed", views.get_posts_by_followed, name="get_posts_by_followed"),
 
     path("profile/<int:id>/is_followed", views.is_followed, name="is_followed"),
-    path("profile/<int:id>/toggle_follow", views.toggle_follow, name="toggle_follow"),
+    path("profile/<int:id>/toggle_follow",
+         views.toggle_follow, name="toggle_follow"),
 
 ]
