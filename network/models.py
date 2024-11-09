@@ -39,4 +39,4 @@ class Post(models.Model):
         }
     
     def __str__(self) -> str:
-        return f"Post by {self.author.username} likes: {self.get_likes_count()} pk: {self.pk} '{self.content[:50]}'"
+        return f"Post by {self.author.username} pk: {self.pk} '{self.content[:50]}'"# 
