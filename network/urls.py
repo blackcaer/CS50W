@@ -4,11 +4,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", views.show_posts, name="index"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path("following", views.show_posts_by_followed_authors, name="following"),
+    path("following", views.show_posts, name="following"),
 
     path("profile/<int:id>", views.show_profile, name="show_profile"),
 
@@ -17,6 +17,8 @@ urlpatterns = [
 
     path("get_posts", views.get_new_posts, name="get_posts"),
     path("get_posts/user/<int:id>", views.get_user_posts, name="get_user_posts"),
+
+    path("get_posts_by_followed", views.get_posts_by_followed, name="get_posts_by_followed"),
 
     path("profile/<int:id>/is_followed", views.is_followed, name="is_followed"),
     path("profile/<int:id>/toggle_follow", views.toggle_follow, name="toggle_follow"),

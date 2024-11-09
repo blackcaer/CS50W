@@ -48,6 +48,12 @@ export async function fetch_new_posts()
     return await response.json();
 }
 
+export async function fetch_posts_by_followed()
+{
+    const response = await fetch('/get_posts_by_followed');
+    return await response.json();
+}
+
 export async function fetch_user_posts(id)
 {
     const response = await fetch(`/get_posts/user/${id}`);
