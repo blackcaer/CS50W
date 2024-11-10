@@ -7,9 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 import json
 
 from .models import User, Post
+
+POSTS_PER_PAGE = 10
 
 
 def show_posts(request):
@@ -101,6 +104,7 @@ def show_profile(request, id):
 def get_posts(request):
     user_id = request.GET.get('user_id')
     followed = request.GET.get('followed')
+    page_num = request.GET.get('page')  # If None paginator defaults to page 1
 
     if followed == 'true' and request.user.is_authenticated:
         followed_users = request.user.following.all()
@@ -112,7 +116,18 @@ def get_posts(request):
     else:
         posts = Post.objects.all().order_by('-date_created')
 
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    paginator = Paginator(posts, POSTS_PER_PAGE)
+    posts = paginator.get_page(page_num)
+    return JsonResponse({'posts':[post.serialize() for post in posts],'page_count':paginator.num_pages})
+
+
+def example(request):
+    contact_list = Post.objects.all()
+    paginator = Paginator(contact_list, 25)  # Show 25 contacts per page.
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'list.html', {'page_obj': page_obj})
 
 
 @login_required

@@ -6,8 +6,9 @@ document.addEventListener('DOMContentLoaded', function () {
         ? base.fetch_posts_by_followed
         : base.fetch_new_posts;
 
-    fetchPosts().then(posts => {
-        base.show_posts(posts, '#main_container', isAuthenticated && !viewFollowing);
+    fetchPosts(base.get_page_num()).then(resp => {
+        const avalibe_pages_num = resp['page_count']
+        base.show_posts(resp['posts'], '#main_container', isAuthenticated && !viewFollowing, avalibe_pages_num);
     });
 
     document.addEventListener('submit', async function (event) {

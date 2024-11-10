@@ -3,9 +3,10 @@ import * as base from './base.js';
 document.addEventListener('DOMContentLoaded', function () {
     const followButton = document.querySelector("#follow-btn");
 
-    base.fetch_user_posts(user_id)
-        .then(posts => {
-            base.show_posts(posts, '#user_posts_container');
+    base.fetch_user_posts(user_id, base.get_page_num())
+        .then(resp => {
+            const avalibe_pages_num = resp['page_count']
+            base.show_posts(resp['posts'], '#user_posts_container', false, avalibe_pages_num);
         });
 
     if (followButton !== null)

@@ -54,39 +54,44 @@ async function fetch_posts(endpoint, params = {}) {
     }
 }
 
-export async function fetch_new_posts() {
-    return await fetch_posts('/get_posts');
+export async function fetch_new_posts(pageNum = 1) {
+    return await fetch_posts('/get_posts', { page: pageNum });
 }
 
-export async function fetch_posts_by_followed() {
-    return await fetch_posts('/get_posts', { followed: 'true' });
+export async function fetch_posts_by_followed(pageNum = 1) {
+    return await fetch_posts('/get_posts', { followed: 'true', page: pageNum });
 }
 
-export async function fetch_user_posts(id) {
-    return await fetch_posts('/get_posts', { user_id: id });
+export async function fetch_user_posts(id, pageNum = 1) {
+    return await fetch_posts('/get_posts', { user_id: id, page: pageNum });
 }
 
-function get_pagination(num_sites)
-{
+export function get_page_num() {
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+    return params.get('page') || 1;
+}
+
+function get_pagination(num_pages) {
     let element = `<nav aria-label="Page navigation example">
         <ul class="pagination">
         <li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
-    
-    for (let i = 1; i <= num_sites; i++) {
+
+    for (let i = 1; i <= num_pages; i++) {
         element += `<li class="page-item"><a class="page-link" href="#">${i}</a></li>`;
     }
-          
-    element+=`<li class="page-item"><a class="page-link" href="#">Next</a></li>
+
+    element += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
         </ul>
       </nav>`;
-    
+
     const div = document.createElement('div')
     div.classList.add('mt-2')
-    div.innerHTML=element;
+    div.innerHTML = element;
     return div
 }
 
-export function show_posts(posts, selector, add_createpost = false) {
+export function show_posts(posts, selector, add_createpost = false, avalibe_pages_num) {
     if (add_createpost)
         document.querySelector(selector).append(get_createpost_element());
 
@@ -98,6 +103,6 @@ export function show_posts(posts, selector, add_createpost = false) {
         posts_div.append(get_post_element(post));
     })
 
-    posts_div.append(get_pagination(3));
+    posts_div.append(get_pagination(avalibe_pages_num));
 }
 
