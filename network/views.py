@@ -98,20 +98,19 @@ def show_profile(request, id):
     return render(request, 'network/profile.html', {'profile': profile})
 
 
-def get_new_posts(request):
-    posts = Post.objects.all().order_by('-date_created')
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+def get_posts(request):
+    user_id = request.GET.get('user_id')
+    followed = request.GET.get('followed')
 
-
-def get_user_posts(request, id):
-    posts = User.objects.get(id=id).posts.all().order_by('-date_created')
-    return JsonResponse([post.serialize() for post in posts], safe=False)
-
-
-def get_posts_by_followed(request):
-    followed_users = request.user.following.all()
-    posts = Post.objects.filter(
-        author__in=followed_users).order_by('-date_created')
+    if followed == 'true' and request.user.is_authenticated:
+        followed_users = request.user.following.all()
+        posts = Post.objects.filter(
+            author__in=followed_users).order_by('-date_created')
+    elif user_id:
+        posts = User.objects.get(
+            id=user_id).posts.all().order_by('-date_created')
+    else:
+        posts = Post.objects.all().order_by('-date_created')
 
     return JsonResponse([post.serialize() for post in posts], safe=False)
 

@@ -39,19 +39,31 @@ export function get_createpost_element() {
     return element;
 }
 
+async function fetch_posts(endpoint, params = {}) {
+    try {
+        const url = new URL(endpoint, window.location.origin);
+        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Failed to fetch posts from ${endpoint}:`, error);
+    }
+}
+
 export async function fetch_new_posts() {
-    const response = await fetch('/get_posts');
-    return await response.json();
+    return await fetch_posts('/get_posts');
 }
 
 export async function fetch_posts_by_followed() {
-    const response = await fetch('/get_posts_by_followed');
-    return await response.json();
+    return await fetch_posts('/get_posts', { followed: 'true' });
 }
 
 export async function fetch_user_posts(id) {
-    const response = await fetch(`/get_posts/user/${id}`);
-    return await response.json();
+    return await fetch_posts('/get_posts', { user_id: id });
 }
 
 function get_pagination(num_sites)
