@@ -69,7 +69,12 @@ export async function fetch_user_posts(id, pageNum = 1) {
 export function get_page_num() {
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
-    return parseInt(params.get('page'));
+    const pageNum = parseInt(params.get('page'));
+    console.log(pageNum);
+
+    if (isNaN(pageNum) || pageNum==undefined)
+        return 1;
+    return pageNum;
 }
 
 function get_pagination(max_pages) {
