@@ -104,7 +104,7 @@ def show_profile(request, id):
 def get_posts(request):
     user_id = request.GET.get('user_id')
     followed = request.GET.get('followed')
-    page_num = request.GET.get('page')  # If None paginator defaults to page 1
+    page_num = request.GET.get('page') or 1
 
     if followed == 'true' and request.user.is_authenticated:
         followed_users = request.user.following.all()
@@ -119,15 +119,6 @@ def get_posts(request):
     paginator = Paginator(posts, POSTS_PER_PAGE)
     posts = paginator.get_page(page_num)
     return JsonResponse({'posts':[post.serialize() for post in posts],'page_count':paginator.num_pages})
-
-
-def example(request):
-    contact_list = Post.objects.all()
-    paginator = Paginator(contact_list, 25)  # Show 25 contacts per page.
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'list.html', {'page_obj': page_obj})
 
 
 @login_required
