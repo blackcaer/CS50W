@@ -13,7 +13,7 @@ export function get_post_element(post) {
         </div>`;
 
     const postContent = `<div class="row mt-2">
-            <div class="col text-capitalize">
+            <div class="col">
                 ${post.content}
             </div>
         </div>`;
@@ -72,24 +72,35 @@ export function get_page_num() {
     return parseInt(params.get('page'));
 }
 
-function get_pagination(num_pages) {
-    let element = `<nav aria-label="Page navigation example">
-        <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
+function get_pagination(max_pages) {
+    const pageNum = get_page_num();
+    const div = document.createElement('div');
+    div.classList.add('mt-2');
 
-    for (let i = 1; i <= num_pages; i++) {
-        element += `<li class="page-item"><a class="page-link" href="#">${i}</a></li>`;
+    if (max_pages === 1)
+        return document.createElement('div');   //TODOpodswietlaj obecne
+
+
+    let element = `<nav aria-label="Page navigation" data-maxpage="${max_pages}">
+        <ul class="pagination">`
+
+    if (pageNum > 1)
+        element += `<li class="page-item"><a class="page-link" href="#" data-page="prev">Previous</a></li>`;
+
+    for (let i = 1; i <= max_pages; i++){
+        const activeClass = i === pageNum ? 'active' : '';
+        element += `<li class="page-item ${activeClass}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
     }
 
-    element += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
-        </ul>
-      </nav>`;
+    if (pageNum < max_pages)
+        element += `<li class="page-item"><a class="page-link" href="#" data-page="next">Next</a></li>`;
+    element += `</ul></nav>`;
 
-    const div = document.createElement('div')
-    div.classList.add('mt-2')
     div.innerHTML = element;
-    return div
+
+    return div;
 }
+
 
 export function show_posts(posts, selector, add_createpost = false, avalibe_pages_num) {
     if (add_createpost)
@@ -106,3 +117,17 @@ export function show_posts(posts, selector, add_createpost = false, avalibe_page
     posts_div.append(get_pagination(avalibe_pages_num));
 }
 
+export function get_clicked_pagination_btn(event) {
+    const clicked_page = event.target.getAttribute('data-page');
+    const max_pages = event.target.parentNode.parentNode.parentNode.getAttribute('data-maxpage');
+
+    let pageNum;
+    if (clicked_page === 'prev') {
+        pageNum = Math.min(Math.max(1, get_page_num() - 1),max_pages);
+    } else if (clicked_page === 'next') {
+        pageNum = Math.max(Math.min(get_page_num() + 1,max_pages),1);
+    } else {
+        pageNum = parseInt(clicked_page);
+    }
+    return pageNum;
+}
