@@ -38,11 +38,13 @@ async function handle_pagination_btns(event) {
 
 async function display_posts_on_site()
 {
-    const pageNum = base.get_page_num();
-    const resp = await fetchPosts(pageNum);
-    const avalibe_pages_num = resp['page_count'];
-    document.querySelector('#main_container').innerHTML='';
-    base.show_posts(resp['posts'], '#main_container',avalibe_pages_num, isAuthenticated && !viewFollowing);
+    fetchPosts(base.get_page_num())
+    .then(resp => {
+        document.querySelector('#main_container').innerHTML='';
+        const avalibe_pages_num = resp['page_count']
+        base.show_posts(resp['posts'], '#main_container', avalibe_pages_num, isAuthenticated && !viewFollowing);
+    });
+
 }
 
 async function createpost_handler(event)
@@ -64,7 +66,7 @@ async function createpost_handler(event)
 
     if (response.ok) {
         const newPost = await response.json();
-        document.querySelector('[data-role="posts-container"]').prepend(base.get_post_element(newPost));
+        document.querySelector('[data-role="posts-container"]').prepend(base.get_post_element(newPost,true));
         form.querySelector('[name="content"]').value = '';
 
     } else {

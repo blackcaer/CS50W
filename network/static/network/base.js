@@ -1,7 +1,9 @@
 
-export function get_post_element(post,with_edit=false) {
+export function get_post_element(post, with_edit = false) {
     const postDiv = document.createElement('div');
     postDiv.classList.add('col', 'border', 'rounded', 'border-secondary', 'p-1', 'mt-2', 'shadow');
+    postDiv.id = `post-${post.id}`;
+    postDiv.setAttribute('data-role', 'post-container');
 
     const postHeader = `<div class="row mt-2">
             <h4 class="col text-left font-weight-bold">
@@ -12,14 +14,14 @@ export function get_post_element(post,with_edit=false) {
             <div class="col text-right">${new Date(post.date_created).toLocaleString()} </div>
         </div>`;
 
-    const postEdit = (with_edit)? `<div class="row mt-2">
+    const postEdit = (with_edit) ? `<div class="row mt-2">
             <div class="col">
-                <a href="#">Edit</a>
+                <a href="#" class="m-0" data-role="edit-link">Edit</a>
             </div>
         </div>` : '';
 
     const postContent = `<div class="row mt-2">
-        <div class="col">
+        <div class="col" data-role="post-content">
             ${post.content}
         </div>
     </div>`;
@@ -31,6 +33,43 @@ export function get_post_element(post,with_edit=false) {
     postDiv.innerHTML = postHeader + postEdit + postContent + postFooter;
     return postDiv;
 }
+
+
+export function handleEditClick(postId) {
+    const postContentDiv = document.querySelector(`#post-${postId} [data-role="post-content"]`);
+    const currentContent = postContentDiv.textContent.trim();
+
+    postContentDiv.innerHTML = `
+<textarea id="edit-content-${postId}" class="form-control">${currentContent}</textarea>
+<button data-role="save-post" class="btn btn-primary mt-2">Save</button>
+    `;
+}
+export async function handleSaveClick(postId) {
+    const newContent = document.getElementById(`edit-content-${postId}`).value;
+    console.log("postid: ",postId)
+    console.log("newContent: ",newContent)
+
+    try {
+        const response = await fetch(`/update_post/${postId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': get_CRSF_token(),
+            },
+            body: JSON.stringify({ content: newContent })
+        });
+        console.log("resp: ",response)
+        if (response.ok) {
+            const postContentDiv = document.querySelector(`#post-${postId} [data-role="post-content"]`);
+            postContentDiv.innerHTML = newContent;
+        } else {
+            console.error('Failed to update post:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 
 export function get_CRSF_token() {
     return document.querySelector("input[name=csrfmiddlewaretoken]").value;
@@ -120,7 +159,25 @@ export function show_posts(posts, selector, avalibe_pages_num,add_createpost = f
 
     posts.forEach(post => {
         const with_edit = (post.author.id===logged_user_id);
-        posts_div.append(get_post_element(post,with_edit));
+
+        const new_post_el = get_post_element(post,with_edit);
+
+        new_post_el.addEventListener('click', function(event) {
+            const target = event.target;
+            
+            if (target.matches('[data-role="edit-link"]')) {
+                event.preventDefault();
+                const postId = target.closest('[data-role="post-container"]').id.split('-')[1];
+                handleEditClick(postId);
+            }
+    
+            if (target.matches('[data-role="save-post"]')) {
+                event.preventDefault();
+                const postId = target.closest('[data-role="post-container"]').id.split('-')[1];
+                handleSaveClick(postId);
+            }
+        });
+        posts_div.append(new_post_el);
     })
 
     posts_div.append(get_pagination(avalibe_pages_num));
