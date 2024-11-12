@@ -17,12 +17,18 @@
     <div class="row mt-2">
         <h2 class="col text-left font-weight-bold">{{profile.username}} </h4>
 
-            <div class="col">following:{{profile.following.count}} </div>
-            <div class="col">followers:{{profile.followers.count}} </div>
+            <div class="col user-stats text-center mt-2">
+                <span class="stat-label">Following:</span>
+                <span class="stat-count">{{ profile.following.count }}</span>
+            </div>
+            <div class="col user-stats text-center mt-2">
+                <span class="stat-label">Followers:</span>
+                <span id="followers_count" class="stat-count">{{ profile.followers.count }}</span>
+            </div>
 
-            {% if request.user.is_authenticated and request.user != profile%}
+            {% if request.user.is_authenticated and request.user != profile %}
             <div class="col text-capitalize text-right">
-                <button id="follow-btn" href="#" type="submit" name="edit" class="btn btn-primary"
+                <button id="follow-btn" href="#" type="submit" name="edit" class="btn btn-primary mt-1"
                     style="width: 100px;height: 43px;visibility: hidden;"></button>
             </div>
             {% endif %}
