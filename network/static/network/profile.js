@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     display_posts_on_site()
 
     if (followButton !== null)
-        handle_follow_btn(followButton)
+        prepare_follow_btn(followButton)
 
     document.addEventListener('click', async function (event) {
         if (event.target.matches('.page-link')) {
@@ -36,7 +36,7 @@ async function handle_pagination_btns(event) {
     display_posts_on_site()
 }
 
-function handle_follow_btn(followButton) {
+function prepare_follow_btn(followButton) {
     fetch(`/profile/${user_id}/is_followed`)
         .then(response => response.json())
         .then(data => {
@@ -50,10 +50,11 @@ function handle_follow_btn(followButton) {
             headers: {
                 "X-CSRFToken": base.get_CRSF_token()
             }
-        })
-            .then(response => response.json())
+        }).then(response => response.json())
             .then(data => {
                 followButton.innerHTML = data.is_followed ? "Unfollow" : "Follow";
+                const curr_val = parseInt(document.querySelector('#followers_count').textContent);
+                document.querySelector('#followers_count').textContent = (data.is_followed ? curr_val + 1 : curr_val - 1);
             });
     });
 }
