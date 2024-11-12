@@ -1,12 +1,7 @@
-html{
+html {
     font-size: large;
 }
-/*body {
-    background-color: #3b3b3b !important;
-    color: white;
-}*/
 
-/* User stats styling */
 .user-stats {
     font-size: 1.1rem;
     font-weight: 500;
@@ -20,7 +15,6 @@ html{
 
 .stat-count {
     font-weight: bold;
-    color: #007bff; /* Bootstrap primary color */
+    color: #007bff;
     margin-left: 4px;
-
 }

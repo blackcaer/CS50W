@@ -10,7 +10,7 @@ class User(AbstractUser):
         return {
             "id": self.id,
             "username": self.username
-            }
+        }
 
     def __str__(self) -> str:
         return f"User {self.username} {self.email} (pk={self.pk})"
@@ -18,13 +18,14 @@ class User(AbstractUser):
 
 class Post(models.Model):
     content = models.CharField(max_length=2048)
-    author = models.ForeignKey(User,on_delete=models.CASCADE,related_name='posts')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='posts')
     date_created = models.DateTimeField(auto_now_add=True)
-    users_liking = models.ManyToManyField(User,related_name='liked_posts')
+    users_liking = models.ManyToManyField(User, related_name='liked_posts')
 
     def get_likes_count(self):
         return self.users_liking.count()
-    
+
     def serialize(self):
         users_liking = self.users_liking.all()
         return {
@@ -34,6 +35,6 @@ class Post(models.Model):
             "content": self.content,
             "date_created": self.date_created.strftime("%b %d %Y, %I:%M %p"),
         }
-    
+
     def __str__(self) -> str:
-        return f"Post by {self.author.username} pk: {self.pk} '{self.content[:50]}'"# 
+        return f"Post by {self.author.username} pk: {self.pk} '{self.content[:50]}'"
