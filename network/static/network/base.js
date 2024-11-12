@@ -46,8 +46,8 @@ export function handleEditClick(postId) {
 }
 export async function handleSaveClick(postId) {
     const newContent = document.getElementById(`edit-content-${postId}`).value;
-    console.log("postid: ",postId)
-    console.log("newContent: ",newContent)
+    console.log("postid: ", postId)
+    console.log("newContent: ", newContent)
 
     try {
         const response = await fetch(`/update_post/${postId}`, {
@@ -58,7 +58,7 @@ export async function handleSaveClick(postId) {
             },
             body: JSON.stringify({ content: newContent })
         });
-        console.log("resp: ",response)
+        console.log("resp: ", response)
         if (response.ok) {
             const postContentDiv = document.querySelector(`#post-${postId} [data-role="post-content"]`);
             postContentDiv.innerHTML = newContent;
@@ -116,7 +116,7 @@ export function get_page_num() {
     const params = new URLSearchParams(url.search);
     const pageNum = parseInt(params.get('page'));
 
-    if (isNaN(pageNum) || pageNum==undefined)
+    if (isNaN(pageNum) || pageNum == undefined)
         return 1;
     return pageNum;
 }
@@ -127,7 +127,7 @@ function get_pagination(max_pages) {
     div.classList.add('mt-2');
 
     if (max_pages === 1)
-        return document.createElement('div'); 
+        return document.createElement('div');
 
     let element = `<nav aria-label="Page navigation" data-maxpage="${max_pages}">
         <ul class="pagination">`
@@ -135,7 +135,7 @@ function get_pagination(max_pages) {
     if (pageNum > 1)
         element += `<li class="page-item"><a class="page-link" href="#" data-page="prev">Previous</a></li>`;
 
-    for (let i = 1; i <= max_pages; i++){
+    for (let i = 1; i <= max_pages; i++) {
         const activeClass = i === pageNum ? 'active' : '';
         element += `<li class="page-item ${activeClass}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
     }
@@ -149,7 +149,7 @@ function get_pagination(max_pages) {
 }
 
 
-export function show_posts(posts, selector, avalibe_pages_num,add_createpost = false) {
+export function show_posts(posts, selector, avalibe_pages_num, add_createpost = false) {
     if (add_createpost)
         document.querySelector(selector).append(get_createpost_element());
 
@@ -158,19 +158,19 @@ export function show_posts(posts, selector, avalibe_pages_num,add_createpost = f
     document.querySelector(selector).append(posts_div);
 
     posts.forEach(post => {
-        const with_edit = (post.author.id===logged_user_id);
+        const with_edit = (post.author.id === logged_user_id);
 
-        const new_post_el = get_post_element(post,with_edit);
+        const new_post_el = get_post_element(post, with_edit);
 
-        new_post_el.addEventListener('click', function(event) {
+        new_post_el.addEventListener('click', function (event) {
             const target = event.target;
-            
+
             if (target.matches('[data-role="edit-link"]')) {
                 event.preventDefault();
                 const postId = target.closest('[data-role="post-container"]').id.split('-')[1];
                 handleEditClick(postId);
             }
-    
+
             if (target.matches('[data-role="save-post"]')) {
                 event.preventDefault();
                 const postId = target.closest('[data-role="post-container"]').id.split('-')[1];
@@ -189,9 +189,9 @@ export function get_clicked_pagination_btn(event) {
 
     let pageNum;
     if (clicked_page === 'prev') {
-        pageNum = Math.min(Math.max(1, get_page_num() - 1),max_pages);
+        pageNum = Math.min(Math.max(1, get_page_num() - 1), max_pages);
     } else if (clicked_page === 'next') {
-        pageNum = Math.max(Math.min(get_page_num() + 1,max_pages),1);
+        pageNum = Math.max(Math.min(get_page_num() + 1, max_pages), 1);
     } else {
         pageNum = parseInt(clicked_page);
     }

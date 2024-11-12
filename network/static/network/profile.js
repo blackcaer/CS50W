@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (followButton !== null)
         handle_follow_btn(followButton)
-       
+
     document.addEventListener('click', async function (event) {
         if (event.target.matches('.page-link')) {
             await handle_pagination_btns(event);
@@ -15,25 +15,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-function display_posts_on_site()
-{
+function display_posts_on_site() {
     base.fetch_user_posts(user_id, base.get_page_num())
         .then(resp => {
-            document.querySelector('#user_posts_container').innerHTML='';
+            document.querySelector('#user_posts_container').innerHTML = '';
             const avalibe_pages_num = resp['page_count']
-            base.show_posts(resp['posts'], '#user_posts_container', avalibe_pages_num,false);
+            base.show_posts(resp['posts'], '#user_posts_container', avalibe_pages_num, false);
         });
 }
 
 async function handle_pagination_btns(event) {
     event.preventDefault();
-    
+
     const pageNum = base.get_clicked_pagination_btn(event)
 
     const url = new URL(window.location.href);
     url.searchParams.set('page', pageNum);
     history.pushState(null, '', url);
-    
+
     display_posts_on_site()
 }
 

@@ -118,16 +118,17 @@ def get_posts(request):
 
     paginator = Paginator(posts, POSTS_PER_PAGE)
     posts = paginator.get_page(page_num)
-    return JsonResponse({'posts':[post.serialize() for post in posts],'page_count':paginator.num_pages})
+    return JsonResponse({'posts': [post.serialize() for post in posts], 'page_count': paginator.num_pages})
+
 
 @login_required
-def update_post(request,post_id):
+def update_post(request, post_id):
     if request.method == "PUT":
         try:
             post = Post.objects.get(author=request.user, id=post_id)
         except Post.DoesNotExist:
             return JsonResponse({"error": "Post not found."}, status=404)
-    
+
         data = json.loads(request.body)
         post.content = data["content"]
         post.save()
@@ -136,6 +137,7 @@ def update_post(request,post_id):
         return JsonResponse({
             "error": "PUT request required."
         }, status=400)
+
 
 @login_required
 def is_followed(request, id):
@@ -163,4 +165,3 @@ def toggle_follow(request, id):
         return JsonResponse({
             "error": "PUT request required."
         }, status=400)
-    
