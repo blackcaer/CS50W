@@ -4,6 +4,7 @@ export function get_post_element(post, with_edit = false) {
     postDiv.classList.add('col', 'border', 'rounded', 'border-secondary', 'p-1', 'mt-2', 'shadow');
     postDiv.id = `post-${post.id}`;
     postDiv.setAttribute('data-role', 'post-container');
+    const isLiked = post.users_liking_ids.includes(logged_user_id);
 
     const postHeader = `<div class="row mt-2">
             <h4 class="col text-left font-weight-bold">
@@ -27,15 +28,21 @@ export function get_post_element(post, with_edit = false) {
     </div>`;
 
     const postFooter = `<div class="row my-2">
-            <div class="col">Likes: ${post.users_liking.length} </div>
-        </div>`;
+        <div class="col">
+            <button class="btn ${isLiked ? 'btn-danger' : 'btn-outline-secondary'} btn-sm like-button" data-role="like-button" data-liked="${isLiked}">
+                <i class="bi ${isLiked ? 'bi-heart-fill' : 'bi-heart'}" data-role="like-icon"></i> 
+                <span data-role="like-count">${post.users_liking_ids.length}</span>
+            </button>
+        </div>
+    </div>`;
 
     postDiv.innerHTML = postHeader + postEdit + postContent + postFooter;
+    post_add_event_listeners(postDiv, post.id);
     return postDiv;
 }
 
 
-export function handleEditClick(postId) {
+function handleEditClick(postId) {
     const postContentDiv = document.querySelector(`#post-${postId} [data-role="post-content"]`);
     const currentContent = postContentDiv.textContent.trim();
 
@@ -44,10 +51,9 @@ export function handleEditClick(postId) {
 <button data-role="save-post" class="btn btn-primary mt-2">Save</button>
     `;
 }
-export async function handleSaveClick(postId) {
+
+async function handleSaveClick(postId) {
     const newContent = document.getElementById(`edit-content-${postId}`).value;
-    console.log("postid: ", postId)
-    console.log("newContent: ", newContent)
 
     try {
         const response = await fetch(`/update_post/${postId}`, {
@@ -56,14 +62,49 @@ export async function handleSaveClick(postId) {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': get_CRSF_token(),
             },
-            body: JSON.stringify({ content: newContent })
+            body: JSON.stringify({ 'content': newContent })
         });
-        console.log("resp: ", response)
+
         if (response.ok) {
+            const responseData = await response.json();
             const postContentDiv = document.querySelector(`#post-${postId} [data-role="post-content"]`);
-            postContentDiv.innerHTML = newContent;
+            postContentDiv.innerHTML = responseData.updated_post.content;
         } else {
             console.error('Failed to update post:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function handleLikeClick(postId) {
+    const likeButton = document.querySelector(`#post-${postId} [data-role="like-button"]`);
+    const likeCount = likeButton.querySelector('[data-role="like-count"]');
+    const likeIcon = likeButton.querySelector('[data-role="like-icon"]');
+    const isLiked = likeButton.getAttribute('data-liked') === 'true';
+
+    try {
+        const response = await fetch(`/update_post/${postId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': get_CRSF_token(),
+            },
+            body: JSON.stringify({ 'user_liking': !isLiked })
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            likeCount.textContent = responseData.likes_count;
+            likeButton.setAttribute('data-liked', responseData.user_liking);
+
+            likeButton.classList.toggle('btn-danger', responseData.user_liking);
+            likeButton.classList.toggle('btn-outline-secondary', !responseData.user_liking);
+
+            likeIcon.classList.toggle('bi-heart-fill', responseData.user_liking);
+            likeIcon.classList.toggle('bi-heart', !responseData.user_liking);
+        } else {
+            console.error('Failed to like/unlike post:', response.statusText);
         }
     } catch (error) {
         console.error('Error:', error);
@@ -148,7 +189,6 @@ function get_pagination(max_pages) {
     return div;
 }
 
-
 export function show_posts(posts, selector, avalibe_pages_num, add_createpost = false) {
     if (add_createpost)
         document.querySelector(selector).append(get_createpost_element());
@@ -162,25 +202,31 @@ export function show_posts(posts, selector, avalibe_pages_num, add_createpost = 
 
         const new_post_el = get_post_element(post, with_edit);
 
-        new_post_el.addEventListener('click', function (event) {
-            const target = event.target;
 
-            if (target.matches('[data-role="edit-link"]')) {
-                event.preventDefault();
-                const postId = target.closest('[data-role="post-container"]').id.split('-')[1];
-                handleEditClick(postId);
-            }
-
-            if (target.matches('[data-role="save-post"]')) {
-                event.preventDefault();
-                const postId = target.closest('[data-role="post-container"]').id.split('-')[1];
-                handleSaveClick(postId);
-            }
-        });
         posts_div.append(new_post_el);
-    })
 
-    posts_div.append(get_pagination(avalibe_pages_num));
+        posts_div.append(get_pagination(avalibe_pages_num));
+    })
+}
+
+function post_add_event_listeners(post_element, postId) {
+    post_element.addEventListener('click', function (event) {
+        const target = event.target;
+
+        if (target.matches('[data-role="edit-link"]')) {
+            event.preventDefault();
+            handleEditClick(postId);
+        }
+
+        if (target.matches('[data-role="save-post"]')) {
+            event.preventDefault();
+            handleSaveClick(postId);
+        }
+
+        if (target.closest('[data-role="like-button"]')) {
+            handleLikeClick(postId);
+        }
+    });
 }
 
 export function get_clicked_pagination_btn(event) {
