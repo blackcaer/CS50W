@@ -122,17 +122,16 @@ def get_posts(request):
 
 @login_required
 def update_post(request,post_id):
-    try:
-        post = Post.objects.get(user=request.user, id=post_id)
-    except Post.DoesNotExist:
-        return JsonResponse({"error": "Email not found."}, status=404)
-    
     if request.method == "PUT":
+        try:
+            post = Post.objects.get(author=request.user, id=post_id)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=404)
+    
         data = json.loads(request.body)
-        if data.get("content") is not None:
-            post.content = data["content"]
+        post.content = data["content"]
         post.save()
-        return HttpResponse(status=204)
+        return JsonResponse(post.serialize())
     else:
         return JsonResponse({
             "error": "PUT request required."
