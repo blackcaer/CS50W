@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
             await handle_pagination_btns(event);
         }
     });
-
 });
 
 function display_posts_on_site()
@@ -22,7 +21,7 @@ function display_posts_on_site()
         .then(resp => {
             document.querySelector('#user_posts_container').innerHTML='';
             const avalibe_pages_num = resp['page_count']
-            base.show_posts(resp['posts'], '#user_posts_container', false, avalibe_pages_num);
+            base.show_posts(resp['posts'], '#user_posts_container', avalibe_pages_num,false);
         });
 }
 

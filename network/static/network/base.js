@@ -1,5 +1,5 @@
 
-export function get_post_element(post) {
+export function get_post_element(post,with_edit=false) {
     const postDiv = document.createElement('div');
     postDiv.classList.add('col', 'border', 'rounded', 'border-secondary', 'p-1', 'mt-2', 'shadow');
 
@@ -12,17 +12,23 @@ export function get_post_element(post) {
             <div class="col text-right">${new Date(post.date_created).toLocaleString()} </div>
         </div>`;
 
-    const postContent = `<div class="row mt-2">
+    const postEdit = (with_edit)? `<div class="row mt-2">
             <div class="col">
-                ${post.content}
+                <a href="#">Edit</a>
             </div>
-        </div>`;
+        </div>` : '';
+
+    const postContent = `<div class="row mt-2">
+        <div class="col">
+            ${post.content}
+        </div>
+    </div>`;
 
     const postFooter = `<div class="row my-2">
             <div class="col">Likes: ${post.users_liking.length} </div>
         </div>`;
 
-    postDiv.innerHTML = postHeader + postContent + postFooter;
+    postDiv.innerHTML = postHeader + postEdit + postContent + postFooter;
     return postDiv;
 }
 
@@ -70,7 +76,6 @@ export function get_page_num() {
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
     const pageNum = parseInt(params.get('page'));
-    console.log(pageNum);
 
     if (isNaN(pageNum) || pageNum==undefined)
         return 1;
@@ -83,8 +88,7 @@ function get_pagination(max_pages) {
     div.classList.add('mt-2');
 
     if (max_pages === 1)
-        return document.createElement('div');   //TODOpodswietlaj obecne
-
+        return document.createElement('div'); 
 
     let element = `<nav aria-label="Page navigation" data-maxpage="${max_pages}">
         <ul class="pagination">`
@@ -96,7 +100,6 @@ function get_pagination(max_pages) {
         const activeClass = i === pageNum ? 'active' : '';
         element += `<li class="page-item ${activeClass}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
     }
-
     if (pageNum < max_pages)
         element += `<li class="page-item"><a class="page-link" href="#" data-page="next">Next</a></li>`;
     element += `</ul></nav>`;
@@ -107,7 +110,7 @@ function get_pagination(max_pages) {
 }
 
 
-export function show_posts(posts, selector, add_createpost = false, avalibe_pages_num) {
+export function show_posts(posts, selector, avalibe_pages_num,add_createpost = false) {
     if (add_createpost)
         document.querySelector(selector).append(get_createpost_element());
 
@@ -116,7 +119,8 @@ export function show_posts(posts, selector, add_createpost = false, avalibe_page
     document.querySelector(selector).append(posts_div);
 
     posts.forEach(post => {
-        posts_div.append(get_post_element(post));
+        const with_edit = (post.author.id===logged_user_id);
+        posts_div.append(get_post_element(post,with_edit));
     })
 
     posts_div.append(get_pagination(avalibe_pages_num));

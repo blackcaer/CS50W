@@ -42,7 +42,7 @@ async function display_posts_on_site()
     const resp = await fetchPosts(pageNum);
     const avalibe_pages_num = resp['page_count'];
     document.querySelector('#main_container').innerHTML='';
-    base.show_posts(resp['posts'], '#main_container', isAuthenticated && !viewFollowing, avalibe_pages_num);
+    base.show_posts(resp['posts'], '#main_container',avalibe_pages_num, isAuthenticated && !viewFollowing);
 }
 
 async function createpost_handler(event)
