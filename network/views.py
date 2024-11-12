@@ -125,14 +125,27 @@ def get_posts(request):
 def update_post(request, post_id):
     if request.method == "PUT":
         try:
-            post = Post.objects.get(author=request.user, id=post_id)
+            post = Post.objects.get(id=post_id)
         except Post.DoesNotExist:
             return JsonResponse({"error": "Post not found."}, status=404)
-
+        
         data = json.loads(request.body)
-        post.content = data["content"]
-        post.save()
-        return JsonResponse(post.serialize())
+
+        if data.get('user_liking') is not None:
+            if data['user_liking']:
+                post.users_liking.add(request.user)
+            else:
+                post.users_liking.remove(request.user)
+                
+            updated_likes_count = post.users_liking.count()
+
+            user_liking = post.users_liking.filter(id=request.user.id).exists()
+
+            return JsonResponse({"likes_count": updated_likes_count,'user_liking': user_liking}, status=200)
+        elif data.get('content') is not None:
+            post.content = data["content"]
+            post.save()
+        return JsonResponse({'updated_post':post.serialize()},status=200)
     else:
         return JsonResponse({
             "error": "PUT request required."
