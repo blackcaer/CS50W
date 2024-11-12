@@ -48,7 +48,7 @@ function handle_follow_btn(followButton) {
 
     followButton.addEventListener("click", () => {
         fetch(`/profile/${user_id}/toggle_follow`, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "X-CSRFToken": base.get_CRSF_token()
             }

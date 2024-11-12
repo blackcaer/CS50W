@@ -131,13 +131,20 @@ def is_followed(request, id):
 @login_required
 def toggle_follow(request, id):
     """Toggle follow/unfollow for the user with the given ID."""
-    profile_user = User.objects.get(id=id)
-    if profile_user.followers.filter(id=request.user.id).exists():
-        # Unfollow if already following
-        profile_user.followers.remove(request.user)
-        is_followed = False
+
+    if request.method == 'PUT':
+        profile_user = User.objects.get(id=id)
+        if profile_user.followers.filter(id=request.user.id).exists():
+            # Unfollow if already following
+            profile_user.followers.remove(request.user)
+            is_followed = False
+        else:
+            # Follow if not following
+            profile_user.followers.add(request.user)
+            is_followed = True
+        return JsonResponse({"is_followed": is_followed})
     else:
-        # Follow if not following
-        profile_user.followers.add(request.user)
-        is_followed = True
-    return JsonResponse({"is_followed": is_followed})
+        return JsonResponse({
+            "error": "PUT request required."
+        }, status=400)
+    
