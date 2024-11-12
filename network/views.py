@@ -120,6 +120,23 @@ def get_posts(request):
     posts = paginator.get_page(page_num)
     return JsonResponse({'posts':[post.serialize() for post in posts],'page_count':paginator.num_pages})
 
+@login_required
+def update_post(request,post_id):
+    try:
+        post = Post.objects.get(user=request.user, id=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Email not found."}, status=404)
+    
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        if data.get("content") is not None:
+            post.content = data["content"]
+        post.save()
+        return HttpResponse(status=204)
+    else:
+        return JsonResponse({
+            "error": "PUT request required."
+        }, status=400)
 
 @login_required
 def is_followed(request, id):
