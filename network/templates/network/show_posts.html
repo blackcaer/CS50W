@@ -3,9 +3,7 @@
 
 {% block script %}
 <script type='module' src="{% static 'network/show_posts.js' %}"></script>
-<script>
-    const isAuthenticated = Boolean('{{ user.is_authenticated|yesno:"true," }}');
-</script>
+
 {% endblock %}
 
 {% block body %}
