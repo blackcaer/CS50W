@@ -199,14 +199,11 @@ export function show_posts(posts, selector, avalibe_pages_num, add_createpost = 
 
     posts.forEach(post => {
         const with_edit = (post.author.id === logged_user_id);
-
         const new_post_el = get_post_element(post, with_edit);
-
-
         posts_div.append(new_post_el);
-
-        posts_div.append(get_pagination(avalibe_pages_num));
     })
+    posts_div.append(get_pagination(avalibe_pages_num));
+
 }
 
 function post_add_event_listeners(post_element, postId) {
