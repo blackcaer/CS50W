@@ -30,7 +30,7 @@ class Post(models.Model):
         return {
             "id": self.id,
             "author": self.author.serialize(),
-            "users_liking": [user.username for user in users_liking],
+            "users_liking_ids": [user.id for user in users_liking],
             "content": self.content,
             "date_created": self.date_created.strftime("%b %d %Y, %I:%M %p"),
         }
